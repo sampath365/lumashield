@@ -22,7 +22,7 @@ class AppProfilesScreen extends ConsumerStatefulWidget {
 
 class _AppProfilesScreenState extends ConsumerState<AppProfilesScreen> {
   String _query = '';
-  bool _enabled = true;
+  bool? _enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +30,7 @@ class _AppProfilesScreenState extends ConsumerState<AppProfilesScreen> {
     final permissions = ref.watch(permissionsControllerProvider);
     final appsAsync = ref.watch(installedAppsProvider);
     final profiles = ref.watch(profilesControllerProvider);
+    _enabled ??= ref.watch(protectionStatusProvider).profilesEnabled;
 
     final configured = {for (final p in profiles) p.packageName: p};
 
@@ -66,7 +67,7 @@ class _AppProfilesScreenState extends ConsumerState<AppProfilesScreen> {
               subtitle:
                   'Only the foreground app name is read, every few seconds',
               trailing: Switch(
-                value: _enabled,
+                value: _enabled ?? false,
                 onChanged: (value) async {
                   setState(() => _enabled = value);
                   await ref

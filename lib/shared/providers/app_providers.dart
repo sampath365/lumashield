@@ -131,10 +131,7 @@ class FilterController extends Notifier<FilterSettings> {
   Future<bool> setEnabled(bool enabled) async {
     if (enabled && PlatformCapabilities.systemOverlay) {
       final granted = await _service.isOverlayGranted();
-      if (!granted) {
-        await _service.openOverlaySettings();
-        return false;
-      }
+      if (!granted) return false;
     }
     state = state.copyWith(enabled: enabled);
     if (enabled) {

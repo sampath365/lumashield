@@ -8,6 +8,7 @@ import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/color_temperature.dart';
 import '../../core/utils/formatters.dart';
+import '../../core/services/schedule_calculator.dart';
 import '../../core/utils/platform_capabilities.dart';
 import '../../shared/models/protection_status.dart';
 import '../../shared/providers/app_providers.dart';
@@ -111,8 +112,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final stats = ref.watch(statsProvider);
     final permissions = ref.watch(permissionsControllerProvider);
 
+    // iOS has no background service, so "on" means the in-app tint is active.
+    final serviceRunning = PlatformCapabilities.backgroundService
+        ? status.running
+        : filter.enabled;
     final nextActivation = status.nextActivation ??
-        (schedule.enabled ? null : null);
+        (schedule.enabled ? ScheduleCalculator.nextActivation(schedule) : null);
     final strength = filter.intensity;
 
     return PageShell(
@@ -129,7 +134,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           const SizedBox(height: 12),
           _StatusChip(
             active: filter.enabled,
-            serviceRunning: status.running,
+            serviceRunning: serviceRunning,
             modeLabel: filter.mode.label,
           ),
           const SizedBox(height: 8),
@@ -138,7 +143,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               active: filter.enabled,
               strength: strength,
               statusLabel: filter.enabled
-                  ? (status.running ? 'Protection active' : 'Starting…')
+                  ? (serviceRunning ? 'Protection active' : 'Starting…')
                   : 'Protection paused',
               onTap: _toggleProtection,
               size: 262,

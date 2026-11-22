@@ -87,6 +87,8 @@ class _RootGate extends ConsumerStatefulWidget {
 
 class _RootGateState extends ConsumerState<_RootGate> {
   bool _splashDone = false;
+  late final bool _startOnDashboard =
+      ref.read(appSettingsControllerProvider).onboarded;
 
   @override
   void initState() {
@@ -99,10 +101,9 @@ class _RootGateState extends ConsumerState<_RootGate> {
   @override
   Widget build(BuildContext context) {
     if (!_splashDone) return const SplashScreen();
-    final settings = ref.watch(appSettingsControllerProvider);
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 450),
-      child: settings.onboarded
+      child: _startOnDashboard
           ? const AppLockGate(child: HomeShell())
           : const OnboardingScreen(),
     );

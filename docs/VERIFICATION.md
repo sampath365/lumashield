@@ -92,13 +92,31 @@ intensity is 0%, the filter turns off.
 Expected: the tint disappears over the camera and returns over the browser
 within a few seconds.
 
-## 9. Prove reminders
+## 9. Prove eye breaks and the status bar score
 
-1. Eye care > 20-20-20 on, interval 5 minutes for the test.
-2. Background the app.
+1. Eye care: turn the 20-20-20 rule on and pick the 20m chip.
+2. Note the "Next break in N min" line on the dashboard and the silent
+   "Eye comfort N%" notification in the shade. The number should match.
+3. Swipe the app away from Recents so the process is gone.
+4. Wait for the interval (set 5 minutes with the slider for a quick test).
 
-Expected: a reminder arrives within five minutes (inexact alarms may add a
-minute). "Send test" in Notification settings must always deliver immediately.
+Expected: a heads-up "Time for an eye break" notification arrives even though
+the app is closed, with Start exercise, Snooze 5m and Done.
+
+5. Tap **Start exercise**: the guided break opens with the owl, a countdown and
+   three steps (look far away, blink slowly, roll and rest).
+6. Let it finish, or tap Done.
+
+Expected: the break closes and the status bar percentage jumps back up. Pull
+down the shade to confirm the new score.
+
+7. Tap **Snooze 5m** on a reminder instead: the next one arrives five minutes
+   later and the dashboard countdown restarts.
+8. Set quiet hours to cover the current time and repeat: no notification
+   appears, but the alarm re-arms silently.
+
+The score itself is covered by unit tests: one point per minute of screen time,
+capped at 70, plus up to 10 for filter strength.
 
 ## 10. Prove graceful failure
 

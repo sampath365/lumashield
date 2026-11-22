@@ -52,3 +52,6 @@ android/key.properties
 *.jks
 *.keystore
 local.properties
+
+# Release artefacts built locally
+/dist/

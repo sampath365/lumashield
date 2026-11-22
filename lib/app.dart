@@ -63,6 +63,7 @@ class _LumaShieldAppState extends ConsumerState<LumaShieldApp> with WidgetsBindi
       builder: (context, child) {
         final content = child ?? const SizedBox.shrink();
         return Stack(
+          fit: StackFit.expand,
           children: [
             content,
             const _IosTintOverlay(),

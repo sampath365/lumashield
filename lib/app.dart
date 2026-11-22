@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/utils/color_temperature.dart';
 import 'core/utils/platform_capabilities.dart';
 import 'features/dashboard/home_shell.dart';
+import 'features/eye_care/break_exercise_screen.dart';
 import 'features/onboarding/onboarding_screen.dart';
 import 'features/splash/splash_screen.dart';
 import 'shared/providers/app_providers.dart';
@@ -19,10 +20,31 @@ class LumaShieldApp extends ConsumerStatefulWidget {
 }
 
 class _LumaShieldAppState extends ConsumerState<LumaShieldApp> with WidgetsBindingObserver {
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  bool _breakScheduled = false;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _consumeLaunchAction());
+  }
+
+  /// Opens the guided break when the app was started from a reminder.
+  Future<void> _consumeLaunchAction() async {
+    if (_breakScheduled) return;
+    final action = await ref.read(filterServiceProvider).consumeLaunchAction();
+    if (!mounted || action != 'eye_break') return;
+    final navigator = _navigatorKey.currentState;
+    if (navigator == null) return;
+    _breakScheduled = true;
+    await navigator.push<bool>(
+      MaterialPageRoute<bool>(
+        builder: (_) => const BreakExerciseScreen(),
+        fullscreenDialog: true,
+      ),
+    );
+    _breakScheduled = false;
   }
 
   @override
@@ -40,6 +62,7 @@ class _LumaShieldAppState extends ConsumerState<LumaShieldApp> with WidgetsBindi
       }
     }
     if (state == AppLifecycleState.resumed) {
+      _consumeLaunchAction();
       // Permissions may have changed in system settings while we were away.
       ref.read(permissionsControllerProvider.notifier).refresh();
       ref.invalidate(statusProvider);
@@ -55,6 +78,7 @@ class _LumaShieldAppState extends ConsumerState<LumaShieldApp> with WidgetsBindi
     final theme = ref.watch(themeBundleProvider);
     return MaterialApp(
       title: 'LumaShield',
+      navigatorKey: _navigatorKey,
       debugShowCheckedModeBanner: false,
       theme: theme.theme,
       darkTheme: theme.darkTheme,

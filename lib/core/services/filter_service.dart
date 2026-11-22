@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import '../../shared/models/app_profile.dart';
+import '../../shared/models/eye_care_settings.dart';
 import '../../shared/models/filter_settings.dart';
 import '../../shared/models/protection_status.dart';
 import '../../shared/models/schedule_settings.dart';
@@ -247,4 +248,47 @@ class FilterService {
   }
 
   Future<bool> requestHomeWidget() => _bool('requestPinWidget');
+
+  /// Pushes the eye care configuration to the native break scheduler.
+  Future<Map<String, dynamic>> updateEyeCare(EyeCareSettings settings) async {
+    if (!isSupported) return const {};
+    try {
+      final map = await _channel.invokeMapMethod<String, dynamic>(
+        'updateEyeCare',
+        settings.toPlatformMap(),
+      );
+      return map ?? const {};
+    } catch (error) {
+      debugPrint('updateEyeCare failed: $error');
+      return const {};
+    }
+  }
+
+  Future<Map<String, dynamic>> eyeCareState() async {
+    if (!isSupported) return const {};
+    try {
+      final map = await _channel.invokeMapMethod<String, dynamic>('getEyeCare');
+      return map ?? const {};
+    } catch (_) {
+      return const {};
+    }
+  }
+
+  /// Marks a break as completed, which resets the eye comfort score.
+  Future<void> completeEyeBreak() => _void('completeEyeBreak');
+
+  Future<void> snoozeEyeBreak() => _void('snoozeEyeBreak');
+
+  /// Arms the next break one interval from now without notifying immediately.
+  Future<void> startEyeBreakNow() => _void('startEyeBreakNow');
+
+  /// Returns "eye_break" when the app was opened from a break notification.
+  Future<String?> consumeLaunchAction() async {
+    if (!isSupported) return null;
+    try {
+      return await _channel.invokeMethod<String>('consumeLaunchAction');
+    } catch (_) {
+      return null;
+    }
+  }
 }

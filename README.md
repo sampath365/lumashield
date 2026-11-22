@@ -59,6 +59,9 @@ all read live state from the native layer.
 | Sunset to sunrise schedule (offline solar maths) | Yes, runs in the native service | Reminder notifications only |
 | Custom times, weekdays, day/night intensities | Yes | Yes (reminders) |
 | 20-20-20, strain, continuous use and sleep reminders | Yes | Yes |
+| Eye breaks every 20/30/45 min that fire with the app closed | Yes (native alarm) | Reminders while running |
+| Guided eye break with an owl mascot and countdown | Yes | Yes |
+| Eye comfort percentage in the status bar | Yes (silent ongoing notification) | No |
 | Daily and weekly reports | Yes | Yes |
 | Biometric app lock | Yes | Yes |
 | AMOLED black theme | Yes | Yes |

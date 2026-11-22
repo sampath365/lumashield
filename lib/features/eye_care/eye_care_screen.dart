@@ -15,6 +15,7 @@ import '../../shared/widgets/section_header.dart';
 import '../../shared/widgets/setting_tile.dart';
 import '../../shared/widgets/stat_tile.dart';
 import '../statistics/statistics_screen.dart';
+import 'break_exercise_screen.dart';
 
 class EyeCareScreen extends ConsumerWidget {
   const EyeCareScreen({super.key});
@@ -25,6 +26,9 @@ class EyeCareScreen extends ConsumerWidget {
     final settings = ref.watch(eyeCareControllerProvider);
     final controller = ref.read(eyeCareControllerProvider.notifier);
     final stats = ref.watch(statsProvider);
+    final status = ref.watch(protectionStatusProvider);
+    final score = status.eyeScore;
+    final nextBreak = status.nextBreakIn;
 
     return PageShell(
       child: Column(
@@ -34,11 +38,74 @@ class EyeCareScreen extends ConsumerWidget {
             title: 'Eye care',
             subtitle: 'Small habits, comfortable eyes',
             trailing: IconButton(
-              tooltip: 'Start a 20 second break',
-              onPressed: () => showBreakTimer(context, seconds: settings.twentyBreakSec),
+              tooltip: 'Start an eye break',
+              onPressed: () => openBreakExercise(context),
               icon: const Icon(Icons.timer_outlined),
             ),
           ),
+          GlassCard(
+            accentBorder: score < 60,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const OwlBadge(size: 46),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Eye comfort $score%',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            nextBreak == null
+                                ? 'Breaks are off'
+                                : (nextBreak <= 0
+                                      ? 'Break is due now'
+                                      : 'Next break in $nextBreak min'),
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: palette.textMuted,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton.filledTonal(
+                      tooltip: 'Start an eye break',
+                      onPressed: () => openBreakExercise(context),
+                      icon: const Icon(Icons.play_arrow_rounded),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: LinearProgressIndicator(
+                    value: score / 100,
+                    minHeight: 8,
+                    backgroundColor: palette.surfaceHigh,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'Starts at 100 and drops one point per minute of continuous screen time. '
+                  'A completed break, or five minutes with the screen off, resets it. '
+                  'Not a medical measurement.',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: palette.textMuted,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 18),
           Row(
             children: [
               Expanded(
@@ -99,14 +166,37 @@ class EyeCareScreen extends ConsumerWidget {
                   onChanged: (v) =>
                       controller.update((s) => s.copyWith(twentyBreakSec: v.round())),
                 ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Remind me every',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: palette.textMuted,
+                        ),
+                      ),
+                    ),
+                    for (final minutes in const [20, 30, 45])
+                      Padding(
+                        padding: const EdgeInsets.only(left: 6),
+                        child: ChoiceChip(
+                          label: Text('${minutes}m'),
+                          selected: settings.twentyIntervalMin == minutes,
+                          onSelected: settings.twentyRuleEnabled
+                              ? (_) => controller.update(
+                                  (s) => s.copyWith(twentyIntervalMin: minutes),
+                                )
+                              : null,
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 12),
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton.icon(
                     style: FilledButton.styleFrom(minimumSize: const Size(0, 46)),
-                    onPressed: () => showBreakTimer(
-                      context,
-                      seconds: settings.twentyBreakSec,
-                    ),
+                    onPressed: () => openBreakExercise(context),
                     icon: const Icon(Icons.play_arrow_rounded, size: 20),
                     label: const Text('Take a break now'),
                   ),
@@ -158,6 +248,18 @@ class EyeCareScreen extends ConsumerWidget {
                   value: settings.lowLightReminder,
                   onChanged: (v) =>
                       controller.update((s) => s.copyWith(lowLightReminder: v)),
+                ),
+              ),
+              SettingTile(
+                icon: Icons.monitor_heart_outlined,
+                title: 'Eye score in the status bar',
+                subtitle: settings.showEyeStatus
+                    ? 'A silent ongoing notification with the percentage'
+                    : 'Hidden',
+                trailing: Switch(
+                  value: settings.showEyeStatus,
+                  onChanged: (v) =>
+                      controller.update((s) => s.copyWith(showEyeStatus: v)),
                 ),
               ),
               SettingTile(
@@ -354,106 +456,5 @@ class EyeCareScreen extends ConsumerWidget {
           .read(eyeCareControllerProvider.notifier)
           .update((s) => s.copyWith(continuousUsageLimitMin: picked));
     }
-  }
-}
-
-/// Full screen break timer with a calm countdown.
-Future<void> showBreakTimer(BuildContext context, {required int seconds}) {
-  return showDialog<void>(
-    context: context,
-    barrierDismissible: false,
-    barrierColor: Colors.black.withValues(alpha: 0.86),
-    builder: (_) => _BreakTimerDialog(seconds: seconds),
-  );
-}
-
-class _BreakTimerDialog extends StatefulWidget {
-  const _BreakTimerDialog({required this.seconds});
-
-  final int seconds;
-
-  @override
-  State<_BreakTimerDialog> createState() => _BreakTimerDialogState();
-}
-
-class _BreakTimerDialogState extends State<_BreakTimerDialog> {
-  late int _remaining = widget.seconds;
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (!mounted) return;
-      if (_remaining <= 1) {
-        timer.cancel();
-        Navigator.of(context).pop();
-      } else {
-        setState(() => _remaining--);
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = context.palette;
-    final progress = _remaining / widget.seconds;
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            width: 190,
-            height: 190,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                SizedBox(
-                  width: 190,
-                  height: 190,
-                  child: CircularProgressIndicator(
-                    value: progress,
-                    strokeWidth: 8,
-                    backgroundColor: Colors.white.withValues(alpha: 0.14),
-                    valueColor: AlwaysStoppedAnimation(palette.accent),
-                  ),
-                ),
-                Text(
-                  '$_remaining',
-                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 26),
-          Text(
-            'Look 20 feet away',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Let your eyes focus on something far away.',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Colors.white70,
-            ),
-          ),
-          const SizedBox(height: 22),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Skip', style: TextStyle(color: Colors.white70)),
-          ),
-        ],
-      ),
-    );
   }
 }

@@ -145,7 +145,9 @@ class NotificationService {
     }
 
     var slot = 0;
-    if (settings.twentyRuleEnabled) {
+    // Android runs its own break alarm in the native service so reminders
+    // still fire when the app is closed; only iOS needs them scheduled here.
+    if (settings.twentyRuleEnabled && !PlatformCapabilities.isAndroid) {
       var cursor = now.add(Duration(minutes: settings.twentyIntervalMin));
       while (cursor.isBefore(horizon) && slot < 24) {
         await scheduleAt(
@@ -158,7 +160,7 @@ class NotificationService {
       }
     }
 
-    if (settings.eyeStrainEnabled) {
+    if (settings.eyeStrainEnabled && !PlatformCapabilities.isAndroid) {
       var cursor = now.add(Duration(minutes: settings.eyeStrainIntervalMin));
       while (cursor.isBefore(horizon) && slot < 30) {
         await scheduleAt(
@@ -171,7 +173,7 @@ class NotificationService {
       }
     }
 
-    if (settings.continuousUsageLimitMin > 0) {
+    if (settings.continuousUsageLimitMin > 0 && !PlatformCapabilities.isAndroid) {
       await scheduleAt(
         now.add(Duration(minutes: settings.continuousUsageLimitMin)),
         'Take a longer break',

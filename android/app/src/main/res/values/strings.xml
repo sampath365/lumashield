@@ -16,6 +16,16 @@
     <string name="action_pause">Pause</string>
     <string name="action_resume">Resume</string>
 
+    <string name="channel_eye_status_name">Eye comfort score</string>
+    <string name="channel_eye_status_description">A silent status bar percentage that shows how rested your eyes are.</string>
+
+    <string name="eye_break_title">Time for an eye break</string>
+    <string name="eye_break_text">%1$d second exercise · %2$d minutes of screen time</string>
+    <string name="eye_break_text_long">You have been looking at the screen for %2$d minutes. Look 20 feet away for %1$d seconds, blink slowly, then roll your eyes once.</string>
+    <string name="eye_break_start">Start exercise</string>
+    <string name="eye_break_snooze">Snooze 5m</string>
+    <string name="eye_break_done">Done</string>
+
     <string name="tile_label">LumaShield</string>
     <string name="tile_state_on">Blue light filter on</string>
     <string name="tile_state_off">Blue light filter off</string>

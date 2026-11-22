@@ -57,6 +57,12 @@ Play reviews these declarations. The answers match the manifest exactly.
 > Optional app lock. The system prompt performs the check; LumaShield only
 > receives pass or fail.
 
+### Eye comfort percentage
+
+The percentage shown in the status bar is calculated on the device from the time
+since your last break, the filter strength and screen-off periods. It is not
+collected, not transmitted and not a medical measurement.
+
 ## Section 3: Advertising and tracking
 
 | Question | Answer |

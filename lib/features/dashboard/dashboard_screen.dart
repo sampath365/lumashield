@@ -141,7 +141,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           Center(
             child: ProtectionOrb(
               active: filter.enabled,
-              strength: strength,
+              score: status.eyeScore,
+              filterStrength: strength,
+              nextBreakIn: status.nextBreakIn,
               statusLabel: filter.enabled
                   ? (serviceRunning ? 'Protection active' : 'Starting…')
                   : 'Protection paused',
@@ -153,10 +155,41 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           Center(
             child: Text(
               filter.enabled
-                  ? 'Tap the shield to pause · ${ColorTemperature.labelFor(filter.kelvin)} ${filter.kelvin}K'
-                  : 'Tap the shield to protect your eyes',
+                  ? 'Tap to pause · ${ColorTemperature.labelFor(filter.kelvin)} ${filter.kelvin}K'
+                  : 'Tap to protect your eyes',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: palette.textMuted,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Center(
+            child: GestureDetector(
+              onTap: () => ref.read(homeTabProvider.notifier).select(2),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: palette.surfaceHigh.withValues(alpha: 0.6),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: palette.border),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.timer_outlined, size: 14, color: palette.textMuted),
+                    const SizedBox(width: 6),
+                    Text(
+                      status.nextBreakIn == null
+                          ? 'Eye breaks are off · tap to enable'
+                          : (status.nextBreakIn! <= 0
+                                ? 'Break is due · tap to start'
+                                : 'Next eye break in ${status.nextBreakIn} min'),
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: palette.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

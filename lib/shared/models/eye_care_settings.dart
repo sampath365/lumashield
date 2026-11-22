@@ -18,6 +18,7 @@ class EyeCareSettings {
     this.quietEndMinute = 7 * 60,
     this.soundEnabled = true,
     this.vibrationEnabled = true,
+    this.showEyeStatus = true,
   });
 
   final bool twentyRuleEnabled;
@@ -36,6 +37,9 @@ class EyeCareSettings {
   final bool soundEnabled;
   final bool vibrationEnabled;
 
+  /// Ongoing, silent status bar notification with the eye comfort percentage.
+  final bool showEyeStatus;
+
   EyeCareSettings copyWith({
     bool? twentyRuleEnabled,
     int? twentyIntervalMin,
@@ -52,6 +56,7 @@ class EyeCareSettings {
     int? quietEndMinute,
     bool? soundEnabled,
     bool? vibrationEnabled,
+    bool? showEyeStatus,
   }) => EyeCareSettings(
     twentyRuleEnabled: twentyRuleEnabled ?? this.twentyRuleEnabled,
     twentyIntervalMin: twentyIntervalMin ?? this.twentyIntervalMin,
@@ -68,7 +73,21 @@ class EyeCareSettings {
     quietEndMinute: quietEndMinute ?? this.quietEndMinute,
     soundEnabled: soundEnabled ?? this.soundEnabled,
     vibrationEnabled: vibrationEnabled ?? this.vibrationEnabled,
+    showEyeStatus: showEyeStatus ?? this.showEyeStatus,
   );
+
+  /// Payload the Kotlin break scheduler reads.
+  Map<String, dynamic> toPlatformMap() => {
+    'breaksEnabled': twentyRuleEnabled,
+    'intervalMin': twentyIntervalMin,
+    'breakLengthSec': twentyBreakSec,
+    'quietEnabled': quietHoursEnabled,
+    'quietStartMin': quietStartMinute,
+    'quietEndMin': quietEndMinute,
+    'sound': soundEnabled,
+    'vibrate': vibrationEnabled,
+    'showEyeStatus': showEyeStatus,
+  };
 
   Map<String, dynamic> toJson() => {
     'twentyRuleEnabled': twentyRuleEnabled,
@@ -86,6 +105,7 @@ class EyeCareSettings {
     'quietEndMinute': quietEndMinute,
     'soundEnabled': soundEnabled,
     'vibrationEnabled': vibrationEnabled,
+    'showEyeStatus': showEyeStatus,
   };
 
   factory EyeCareSettings.fromJson(Map<String, dynamic> json) => EyeCareSettings(
@@ -104,5 +124,6 @@ class EyeCareSettings {
     quietEndMinute: (json['quietEndMinute'] as num?)?.toInt() ?? 7 * 60,
     soundEnabled: json['soundEnabled'] as bool? ?? true,
     vibrationEnabled: json['vibrationEnabled'] as bool? ?? true,
+    showEyeStatus: json['showEyeStatus'] as bool? ?? true,
   );
 }

@@ -36,7 +36,8 @@ AUTOMATIC PROTECTION
 • Quick settings tile and home screen widget for one tap control
 
 EYE CARE
-• 20-20-20 rule reminders with a full screen break timer
+• Eye breaks every 20, 30 or 45 minutes, with a guided 3 step exercise
+• A live eye comfort percentage in the status bar, so you can see it drop
 • Eye strain and continuous use reminders
 • Sleep wind down cue and a daily eye comfort report
 • Reading mode with a warm paper surface and larger type
@@ -79,19 +80,20 @@ LumaShield is not a medical device.
 | --- | --- | --- |
 | Store icon | `graphics/app-icon-512.png` | 512x512 PNG, under 1 MB |
 | Feature graphic | `graphics/feature-graphic-1024x500.png` | 1024x500 PNG |
-| Phone screenshots | `graphics/screenshots/phone/01..10` | 1080x1920 |
+| Phone screenshots | `graphics/screenshots/phone/01..08` | 1080x1920 |
 | 7 inch tablet | `graphics/screenshots/tablet-7/01..05` | 1200x1920 |
 | 10 inch tablet | `graphics/screenshots/tablet-10/01..05` | 1600x2560 |
 
-Screenshot captions you can paste in the Play Console:
+Screenshot captions you can paste in the Play Console (8 phone shots, the
+maximum Play allows; three extras live in `graphics/screenshots/extras/`):
 
-1. Dashboard — one tap protection with a live strength ring
+1. Dashboard — the eye comfort ring grows and shrinks through the day
 2. Filter settings — before and after, plus a custom colour picker
 3. Schedule — sunset to sunrise, calculated offline
-4. Eye care — 20-20-20 reminders and break timer
-5. Insights — daily and weekly eye comfort reports
-6. Appearance — deep navy, AMOLED black and daylight themes
-7. Onboarding — explains blue light in plain language
-8. Permissions — every permission explained before it is requested
-9. Reading mode — warm paper surface with a session timer
-10. Presets — save and recall your favourite filters
+4. Eye care — the score, reminders and break controls
+5. Eye break — a guided exercise with the owl and a countdown
+6. Insights — daily and weekly eye comfort reports
+7. Appearance — deep navy, AMOLED black and daylight themes
+8. Onboarding — explains blue light in plain language
+
+Extras (not uploaded): permissions, reading mode, saved presets.

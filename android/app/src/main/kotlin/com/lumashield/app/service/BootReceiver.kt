@@ -36,6 +36,11 @@ class BootReceiver : BroadcastReceiver() {
             ScheduleAlarmScheduler.scheduleNext(context)
         }
 
+        // Eye breaks and the status bar score are independent of the filter.
+        EyeBreakScheduler.scheduleNext(context)
+        EyeBreakScheduler.startStatusRefresh(context)
+        EyeStatusNotifier.update(context)
+
         val shouldRestore = prefs.restoreOnBoot && prefs.filter.enabled
         if (shouldRestore && FilterSupport.canDrawOverlays(context)) {
             OverlayFilterService.start(context)

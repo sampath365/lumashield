@@ -18,9 +18,10 @@ deploy/
     │   ├── logo-lockup-1200x400.png    transparent lockup for press/site
     │   ├── adaptive-icon/              Android 13 layers (foreground/background/monochrome)
     │   └── screenshots/
-    │       ├── phone/       1080x1920  (10 screens)
+    │       ├── phone/       1080x1920  (8 screens, the Play maximum)
     │       ├── tablet-7/    1200x1920  (5 screens)
-    │       └── tablet-10/   1600x2560  (5 screens)
+    │       ├── tablet-10/   1600x2560  (5 screens)
+    │       └── extras/      1080x1920  (permissions, reading mode, presets)
     └── binaries/
         ├── LumaShield-1.0.0-release.aab   upload this to Play
         ├── LumaShield-1.0.0-release.apk   sideload / QA

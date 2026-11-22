@@ -366,18 +366,42 @@ final scheduleControllerProvider = NotifierProvider<ScheduleController, Schedule
 
 class EyeCareController extends Notifier<EyeCareSettings> {
   @override
-  EyeCareSettings build() => ref.watch(settingsRepositoryProvider).readEyeCare();
+  EyeCareSettings build() {
+    final stored = ref.watch(settingsRepositoryProvider).readEyeCare();
+    // Hand the settings to the native scheduler so breaks survive app death.
+    Future.microtask(() async {
+      await ref.read(filterServiceProvider).updateEyeCare(stored);
+      ref.invalidate(statusProvider);
+    });
+    return stored;
+  }
 
   Future<void> update(EyeCareSettings Function(EyeCareSettings) change) async {
     state = change(state);
     await ref.read(settingsRepositoryProvider).writeEyeCare(state);
+    if (PlatformCapabilities.systemOverlay) {
+      await ref.read(filterServiceProvider).updateEyeCare(state);
+      ref.invalidate(statusProvider);
+    }
     await ref.read(notificationServiceProvider).rescheduleReminders(state);
   }
 
   Future<void> reset() async {
     state = const EyeCareSettings();
     await ref.read(settingsRepositoryProvider).writeEyeCare(state);
+    if (PlatformCapabilities.systemOverlay) {
+      await ref.read(filterServiceProvider).updateEyeCare(state);
+      ref.invalidate(statusProvider);
+    }
     await ref.read(notificationServiceProvider).rescheduleReminders(state);
+  }
+
+  /// Logs a completed break, resetting the native eye comfort score.
+  Future<void> completeBreak() async {
+    if (PlatformCapabilities.systemOverlay) {
+      await ref.read(filterServiceProvider).completeEyeBreak();
+      ref.invalidate(statusProvider);
+    }
   }
 }
 

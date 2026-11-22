@@ -19,6 +19,7 @@ import 'package:lumashield/core/services/notification_service.dart';
 import 'package:lumashield/core/theme/app_theme.dart';
 import 'package:lumashield/features/blue_filter/filter_settings_screen.dart';
 import 'package:lumashield/features/dashboard/dashboard_screen.dart';
+import 'package:lumashield/features/eye_care/break_exercise_screen.dart';
 import 'package:lumashield/features/eye_care/eye_care_screen.dart';
 import 'package:lumashield/features/onboarding/onboarding_screen.dart';
 import 'package:lumashield/features/onboarding/permission_setup_screen.dart';
@@ -51,6 +52,10 @@ class _PreviewFilterService extends FilterService {
     scheduleEnabled: true,
     nextActivation: DateTime.now().add(const Duration(hours: 3)),
     showNotification: true,
+    eyeScore: 86,
+    nextBreakIn: 12,
+    breaksEnabled: true,
+    breakIntervalMin: 20,
   );
 
   @override
@@ -85,6 +90,7 @@ Future<void> _loadFont(String family, List<String> paths) async {
 /// Play Store screenshot classes. Physical sizes are what gets uploaded.
 enum _Device {
   phone('phone', Size(1080, 1920), 3),
+  extras('extras', Size(1080, 1920), 3),
   tablet7('tablet-7', Size(1200, 1920), 2),
   tablet10('tablet-10', Size(1600, 2560), 2);
 
@@ -234,31 +240,52 @@ void main() {
     await capture(tester, const Scaffold(body: EyeCareScreen()), '04_eye_care');
   });
 
-  testWidgets('05 insights', (tester) async {
-    await capture(tester, const Scaffold(body: StatisticsScreen()), '05_insights');
+  testWidgets('05 eye break', (tester) async {
+    await capture(
+      tester,
+      const BreakExerciseScreen(autoStart: false),
+      '05_eye_break',
+    );
   });
 
-  testWidgets('06 appearance', (tester) async {
-    await capture(tester, const ThemeSettingsScreen(), '06_appearance');
+  testWidgets('06 insights', (tester) async {
+    await capture(tester, const Scaffold(body: StatisticsScreen()), '06_insights');
   });
 
-  testWidgets('07 onboarding', (tester) async {
-    await capture(tester, const OnboardingScreen(), '07_onboarding');
+  testWidgets('07 appearance', (tester) async {
+    await capture(tester, const ThemeSettingsScreen(), '07_appearance');
   });
 
-  testWidgets('08 permissions', (tester) async {
-    await capture(tester, const PermissionSetupScreen(), '08_permissions');
+  testWidgets('08 onboarding', (tester) async {
+    await capture(tester, const OnboardingScreen(), '08_onboarding');
   });
 
-  testWidgets('09 reading mode', (tester) async {
-    await capture(tester, const ReadingModeScreen(), '09_reading_mode');
+  // Extras: useful for the website and press, not uploaded (Play caps the
+  // phone set at eight).
+  testWidgets('extras permissions', (tester) async {
+    await capture(
+      tester,
+      const PermissionSetupScreen(),
+      'permissions',
+      device: _Device.extras,
+    );
   });
 
-  testWidgets('10 filter presets', (tester) async {
+  testWidgets('extras reading mode', (tester) async {
+    await capture(
+      tester,
+      const ReadingModeScreen(),
+      'reading_mode',
+      device: _Device.extras,
+    );
+  });
+
+  testWidgets('extras presets', (tester) async {
     await capture(
       tester,
       const FilterSettingsScreen(),
-      '10_filter_presets',
+      'filter_presets',
+      device: _Device.extras,
       scrollDown: true,
     );
   });

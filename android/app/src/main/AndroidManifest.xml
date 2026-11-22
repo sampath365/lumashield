@@ -95,6 +95,18 @@
             android:exported="false" />
 
         <receiver
+            android:name=".service.EyeBreakReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.lumashield.app.action.EYE_BREAK" />
+                <action android:name="com.lumashield.app.action.EYE_BREAK_DONE" />
+                <action android:name="com.lumashield.app.action.EYE_BREAK_SNOOZE" />
+                <action android:name="com.lumashield.app.action.EYE_BREAK_START" />
+                <action android:name="com.lumashield.app.action.EYE_STATUS_REFRESH" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
             android:name=".widget.FilterWidgetProvider"
             android:exported="true">
             <intent-filter>

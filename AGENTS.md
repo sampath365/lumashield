@@ -59,6 +59,9 @@ a `package:flutter/material.dart` import.
   This is verified by `android/app/src/test/.../FilterConfigTest.kt`.
 * Schedule boundaries are computed by `SchedulePlanner` + `SolarCalc` and armed
   with `AlarmManager`; exact alarms degrade to inexact when not permitted.
+* Eye breaks are owned by `EyeBreakScheduler` + `EyeBreakReceiver` (native, so
+  they fire with the app closed). The percentage in the status bar comes from
+  `EyeScore` and `EyeStatusNotifier`; the Dart side only displays it.
 * The app must never claim a capability it lacks. `ProtectionStatus` comes from
   the native side; the orb reflects it.
 

@@ -172,6 +172,79 @@ class FilterPrefs(context: Context) {
         get() = prefs.getBoolean(KEY_PER_APP_ENABLED, false)
         set(value) = prefs.edit().putBoolean(KEY_PER_APP_ENABLED, value).apply()
 
+
+    // --- Eye care -----------------------------------------------------------
+
+    var breaksEnabled: Boolean
+        get() = prefs.getBoolean(KEY_BREAKS_ENABLED, true)
+        set(value) = prefs.edit().putBoolean(KEY_BREAKS_ENABLED, value).apply()
+
+    /** Minutes between eye breaks, 20 or 30 in the UI. */
+    var breakIntervalMin: Int
+        get() = prefs.getInt(KEY_BREAK_INTERVAL, 20).coerceIn(5, 120)
+        set(value) = prefs.edit().putInt(KEY_BREAK_INTERVAL, value.coerceIn(5, 120)).apply()
+
+    var breakLengthSec: Int
+        get() = prefs.getInt(KEY_BREAK_LENGTH, 20).coerceIn(5, 120)
+        set(value) = prefs.edit().putInt(KEY_BREAK_LENGTH, value.coerceIn(5, 120)).apply()
+
+    var quietHoursEnabled: Boolean
+        get() = prefs.getBoolean(KEY_QUIET_ENABLED, true)
+        set(value) = prefs.edit().putBoolean(KEY_QUIET_ENABLED, value).apply()
+
+    var quietStartMin: Int
+        get() = prefs.getInt(KEY_QUIET_START, 23 * 60)
+        set(value) = prefs.edit().putInt(KEY_QUIET_START, value.coerceIn(0, 1439)).apply()
+
+    var quietEndMin: Int
+        get() = prefs.getInt(KEY_QUIET_END, 7 * 60)
+        set(value) = prefs.edit().putInt(KEY_QUIET_END, value.coerceIn(0, 1439)).apply()
+
+    var eyeSound: Boolean
+        get() = prefs.getBoolean(KEY_EYE_SOUND, true)
+        set(value) = prefs.edit().putBoolean(KEY_EYE_SOUND, value).apply()
+
+    var eyeVibrate: Boolean
+        get() = prefs.getBoolean(KEY_EYE_VIBRATE, true)
+        set(value) = prefs.edit().putBoolean(KEY_EYE_VIBRATE, value).apply()
+
+    /** Shows the eye comfort percentage as an ongoing status bar notification. */
+    var eyeStatusEnabled: Boolean
+        get() = prefs.getBoolean(KEY_EYE_STATUS, true)
+        set(value) = prefs.edit().putBoolean(KEY_EYE_STATUS, value).apply()
+
+    var lastBreakAt: Long
+        get() = prefs.getLong(KEY_LAST_BREAK, 0L)
+        set(value) = prefs.edit().putLong(KEY_LAST_BREAK, value).apply()
+
+    var nextBreakAt: Long
+        get() = prefs.getLong(KEY_NEXT_BREAK, 0L)
+        set(value) = prefs.edit().putLong(KEY_NEXT_BREAK, value).apply()
+
+    /** Minutes of continuous screen time recorded since the last break. */
+    var screenMinutesSinceBreak: Int
+        get() = prefs.getInt(KEY_SCREEN_MINUTES, 0)
+        set(value) = prefs.edit().putInt(KEY_SCREEN_MINUTES, value.coerceAtLeast(0)).apply()
+
+    fun isQuietNow(now: java.util.Calendar = java.util.Calendar.getInstance()): Boolean {
+        if (!quietHoursEnabled) return false
+        val minute = now.get(java.util.Calendar.HOUR_OF_DAY) * 60 + now.get(java.util.Calendar.MINUTE)
+        return EyeScore.isQuiet(minute, quietStartMin, quietEndMin)
+    }
+
+    /** Applies the eye care settings pushed from Flutter. */
+    fun applyEyeCare(map: Map<*, *>) {
+        (map["breaksEnabled"] as? Boolean)?.let { breaksEnabled = it }
+        (map["intervalMin"] as? Number)?.let { breakIntervalMin = it.toInt() }
+        (map["breakLengthSec"] as? Number)?.let { breakLengthSec = it.toInt() }
+        (map["quietEnabled"] as? Boolean)?.let { quietHoursEnabled = it }
+        (map["quietStartMin"] as? Number)?.let { quietStartMin = it.toInt() }
+        (map["quietEndMin"] as? Number)?.let { quietEndMin = it.toInt() }
+        (map["sound"] as? Boolean)?.let { eyeSound = it }
+        (map["vibrate"] as? Boolean)?.let { eyeVibrate = it }
+        (map["showEyeStatus"] as? Boolean)?.let { eyeStatusEnabled = it }
+    }
+
     /** Map of package name to profile, stored as JSON so it is easy to diff. */
     var profiles: List<AppProfile>
         get() {
@@ -241,5 +314,18 @@ class FilterPrefs(context: Context) {
         private const val KEY_AUTO_RESTART = "service_auto_restart"
         private const val KEY_PER_APP_ENABLED = "profiles_enabled"
         private const val KEY_PROFILES = "profiles_json"
+
+        private const val KEY_BREAKS_ENABLED = "eye_breaks_enabled"
+        private const val KEY_BREAK_INTERVAL = "eye_break_interval"
+        private const val KEY_BREAK_LENGTH = "eye_break_length"
+        private const val KEY_QUIET_ENABLED = "eye_quiet_enabled"
+        private const val KEY_QUIET_START = "eye_quiet_start"
+        private const val KEY_QUIET_END = "eye_quiet_end"
+        private const val KEY_EYE_SOUND = "eye_sound"
+        private const val KEY_EYE_VIBRATE = "eye_vibrate"
+        private const val KEY_EYE_STATUS = "eye_status_enabled"
+        private const val KEY_LAST_BREAK = "eye_last_break"
+        private const val KEY_NEXT_BREAK = "eye_next_break"
+        private const val KEY_SCREEN_MINUTES = "eye_screen_minutes"
     }
 }

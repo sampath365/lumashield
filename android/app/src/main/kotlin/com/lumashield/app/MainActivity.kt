@@ -25,6 +25,8 @@ import com.lumashield.app.filter.FilterPrefs
 import com.lumashield.app.filter.FilterSupport
 import com.lumashield.app.filter.SchedulePlanner
 import com.lumashield.app.filter.ScheduleSettings
+import com.lumashield.app.service.EyeBreakScheduler
+import com.lumashield.app.service.EyeStatusNotifier
 import com.lumashield.app.service.ForegroundAppReader
 import com.lumashield.app.service.NotificationHelper
 import com.lumashield.app.service.OverlayFilterService
@@ -39,10 +41,16 @@ import com.lumashield.app.widget.FilterWidgetProvider
  */
 class MainActivity : FlutterFragmentActivity() {
 
+    companion object {
+        const val EXTRA_LAUNCH_ACTION = "lumashield.launch_action"
+        const val LAUNCH_ACTION_EYE_BREAK = "eye_break"
+    }
+
     private val methodChannelName = "com.lumashield.app/filter"
     private val eventChannelName = "com.lumashield.app/events"
 
     private var eventSink: EventChannel.EventSink? = null
+    private var pendingLaunchAction: String? = null
     private val busListener: (Map<String, Any?>) -> Unit = { state ->
         runOnUiThread { eventSink?.success(state) }
     }
@@ -50,6 +58,22 @@ class MainActivity : FlutterFragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         NotificationHelper.createChannels(this)
+        pendingLaunchAction = intent?.getStringExtra(EXTRA_LAUNCH_ACTION)
+        EyeBreakScheduler.scheduleNext(this)
+        EyeBreakScheduler.startStatusRefresh(this)
+        EyeStatusNotifier.update(this)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        val action = intent.getStringExtra(EXTRA_LAUNCH_ACTION) ?: return
+        pendingLaunchAction = action
+        eventSink?.success(mapOf("launchAction" to action))
+    }
+
+    override fun onResume() {
+        super.onResume()
+        EyeStatusNotifier.update(this)
     }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
@@ -237,6 +261,41 @@ class MainActivity : FlutterFragmentActivity() {
                 result.success(true)
             }
 
+            "updateEyeCare" -> {
+                val map = arguments as? Map<*, *> ?: emptyMap<Any, Any>()
+                prefs.applyEyeCare(map)
+                EyeBreakScheduler.scheduleNext(this)
+                EyeBreakScheduler.startStatusRefresh(this)
+                EyeStatusNotifier.update(this)
+                result.success(eyeCareMap(prefs))
+            }
+
+            "getEyeCare" -> result.success(eyeCareMap(prefs))
+
+            "completeEyeBreak" -> {
+                EyeStatusNotifier.registerRest(this)
+                EyeBreakScheduler.scheduleNext(this)
+                NotificationHelper.cancelEyeBreakNotification(this)
+                result.success(eyeCareMap(prefs))
+            }
+
+            "snoozeEyeBreak" -> {
+                EyeBreakScheduler.snooze(this, 5)
+                NotificationHelper.cancelEyeBreakNotification(this)
+                result.success(eyeCareMap(prefs))
+            }
+
+            "startEyeBreakNow" -> {
+                EyeBreakScheduler.snooze(this, prefs.breakIntervalMin)
+                result.success(eyeCareMap(prefs))
+            }
+
+            "consumeLaunchAction" -> {
+                val action = pendingLaunchAction
+                pendingLaunchAction = null
+                result.success(action)
+            }
+
             "getInstalledApps" -> result.success(launchableApps())
 
             "getForegroundApp" -> result.success(ForegroundAppReader.currentPackage(this))
@@ -287,6 +346,23 @@ class MainActivity : FlutterFragmentActivity() {
         }
     }
 
+    private fun eyeCareMap(prefs: FilterPrefs): Map<String, Any?> = mapOf(
+        "breaksEnabled" to prefs.breaksEnabled,
+        "intervalMin" to prefs.breakIntervalMin,
+        "breakLengthSec" to prefs.breakLengthSec,
+        "quietEnabled" to prefs.quietHoursEnabled,
+        "quietStartMin" to prefs.quietStartMin,
+        "quietEndMin" to prefs.quietEndMin,
+        "sound" to prefs.eyeSound,
+        "vibrate" to prefs.eyeVibrate,
+        "showEyeStatus" to prefs.eyeStatusEnabled,
+        "eyeScore" to EyeStatusNotifier.computeScore(prefs),
+        "minutesSinceBreak" to ((System.currentTimeMillis() - prefs.lastBreakAt) / 60_000L)
+            .coerceAtLeast(0),
+        "nextBreakIn" to EyeStatusNotifier.minutesUntilBreak(prefs),
+        "nextBreakAt" to prefs.nextBreakAt,
+    )
+
     private fun statusMap(): Map<String, Any?> {
         val prefs = FilterPrefs(this)
         val config = prefs.filter
@@ -316,6 +392,11 @@ class MainActivity : FlutterFragmentActivity() {
             "restoreOnBoot" to prefs.restoreOnBoot,
             "autoRestart" to prefs.autoRestart,
             "profilesEnabled" to prefs.perAppEnabled,
+            "eyeScore" to EyeStatusNotifier.computeScore(prefs),
+            "nextBreakIn" to EyeStatusNotifier.minutesUntilBreak(prefs),
+            "eyeStatusEnabled" to prefs.eyeStatusEnabled,
+            "breaksEnabled" to prefs.breaksEnabled,
+            "breakIntervalMin" to prefs.breakIntervalMin,
         )
     }
 

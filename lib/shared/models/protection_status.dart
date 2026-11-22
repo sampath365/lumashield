@@ -26,6 +26,11 @@ class ProtectionStatus {
     this.restoreOnBoot = true,
     this.autoRestart = true,
     this.profilesEnabled = false,
+    this.eyeScore = 100,
+    this.nextBreakIn,
+    this.eyeStatusEnabled = true,
+    this.breaksEnabled = true,
+    this.breakIntervalMin = 20,
   });
 
   final bool supported;
@@ -49,6 +54,15 @@ class ProtectionStatus {
   final bool restoreOnBoot;
   final bool autoRestart;
   final bool profilesEnabled;
+
+  /// Explainable eye comfort score, 0-100, computed by the native layer.
+  final int eyeScore;
+
+  /// Minutes until the next scheduled eye break, null when breaks are off.
+  final int? nextBreakIn;
+  final bool eyeStatusEnabled;
+  final bool breaksEnabled;
+  final int breakIntervalMin;
 
   bool get active => enabled && running;
 
@@ -83,6 +97,11 @@ class ProtectionStatus {
       restoreOnBoot: map['restoreOnBoot'] as bool? ?? true,
       autoRestart: map['autoRestart'] as bool? ?? true,
       profilesEnabled: map['profilesEnabled'] as bool? ?? false,
+      eyeScore: (map['eyeScore'] as num?)?.toInt() ?? 100,
+      nextBreakIn: (map['nextBreakIn'] as num?)?.toInt(),
+      eyeStatusEnabled: map['eyeStatusEnabled'] as bool? ?? true,
+      breaksEnabled: map['breaksEnabled'] as bool? ?? true,
+      breakIntervalMin: (map['breakIntervalMin'] as num?)?.toInt() ?? 20,
     );
   }
 
@@ -108,6 +127,11 @@ class ProtectionStatus {
     bool? restoreOnBoot,
     bool? autoRestart,
     bool? profilesEnabled,
+    int? eyeScore,
+    int? nextBreakIn,
+    bool? eyeStatusEnabled,
+    bool? breaksEnabled,
+    int? breakIntervalMin,
   }) => ProtectionStatus(
     supported: supported ?? this.supported,
     running: running ?? this.running,
@@ -130,5 +154,10 @@ class ProtectionStatus {
     restoreOnBoot: restoreOnBoot ?? this.restoreOnBoot,
     autoRestart: autoRestart ?? this.autoRestart,
     profilesEnabled: profilesEnabled ?? this.profilesEnabled,
+    eyeScore: eyeScore ?? this.eyeScore,
+    nextBreakIn: nextBreakIn ?? this.nextBreakIn,
+    eyeStatusEnabled: eyeStatusEnabled ?? this.eyeStatusEnabled,
+    breaksEnabled: breaksEnabled ?? this.breaksEnabled,
+    breakIntervalMin: breakIntervalMin ?? this.breakIntervalMin,
   );
 }

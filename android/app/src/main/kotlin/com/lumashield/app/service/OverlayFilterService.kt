@@ -118,6 +118,8 @@ class OverlayFilterService : Service() {
     private var overlayView: OverlayView? = null
     private var userStopped = false
     private val handler = Handler(Looper.getMainLooper())
+    private var eyeTicker: Runnable? = null
+    private var lastInteractiveAt: Long = 0L
     private var profileWatcher: Runnable? = null
     private var lastProfilePackage: String? = null
 
@@ -196,6 +198,7 @@ class OverlayFilterService : Service() {
         publish()
         ScheduleAlarmScheduler.scheduleNext(this)
         startProfileWatcher()
+        startEyeTicker()
     }
 
     private fun startForegroundCompat(config: FilterConfig) {
@@ -277,6 +280,7 @@ class OverlayFilterService : Service() {
     }
 
     private fun teardown() {
+        stopEyeTicker()
         stopProfileWatcher()
         detachOverlay()
         publish()
@@ -301,6 +305,29 @@ class OverlayFilterService : Service() {
         }
         profileWatcher = runnable
         handler.postDelayed(runnable, 1200)
+    }
+
+    /** Refreshes the eye comfort percentage once a minute while protection runs. */
+    private fun startEyeTicker() {
+        if (eyeTicker != null) return
+        val runnable = object : Runnable {
+            override fun run() {
+                val power = getSystemService(Context.POWER_SERVICE) as PowerManager
+                val interactive = power.isInteractive
+                EyeStatusNotifier.handleScreenState(this@OverlayFilterService, interactive, lastInteractiveAt)
+                if (interactive) lastInteractiveAt = System.currentTimeMillis()
+                EyeStatusNotifier.update(this@OverlayFilterService)
+                handler.postDelayed(this, 60_000)
+            }
+        }
+        eyeTicker = runnable
+        lastInteractiveAt = System.currentTimeMillis()
+        handler.postDelayed(runnable, 60_000)
+    }
+
+    private fun stopEyeTicker() {
+        eyeTicker?.let { handler.removeCallbacks(it) }
+        eyeTicker = null
     }
 
     private fun stopProfileWatcher() {
@@ -352,6 +379,7 @@ class OverlayFilterService : Service() {
             "nextDeactivation" to SchedulePlanner.nextDeactivation(System.currentTimeMillis(), schedule),
         )
         FilterBus.emit(state)
+        EyeStatusNotifier.update(this)
         FilterTileService.requestTileUpdate(this)
         FilterWidgetProvider.refresh(this)
         if (isRunning) {
@@ -374,6 +402,7 @@ class OverlayFilterService : Service() {
     }
 
     override fun onDestroy() {
+        stopEyeTicker()
         stopProfileWatcher()
         detachOverlay()
         isRunning = false

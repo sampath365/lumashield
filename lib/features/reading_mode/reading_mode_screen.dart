@@ -8,7 +8,7 @@ import '../../core/utils/color_temperature.dart';
 import '../../shared/models/filter_settings.dart';
 import '../../shared/providers/app_providers.dart';
 import '../../shared/widgets/luma_slider.dart';
-import '../eye_care/eye_care_screen.dart';
+import '../eye_care/break_exercise_screen.dart';
 
 /// Dedicated reading surface: warm paper tone, larger type and a session timer
 /// that offers a break every 20 minutes.
@@ -33,7 +33,7 @@ class _ReadingModeScreenState extends ConsumerState<ReadingModeScreen> {
       if (!mounted) return;
       setState(() => _elapsedSeconds++);
       if (_elapsedSeconds % 1200 == 0) {
-        showBreakTimer(context, seconds: 20);
+        openBreakExercise(context);
       }
     });
   }
@@ -248,7 +248,7 @@ class _ReadingModeScreenState extends ConsumerState<ReadingModeScreen> {
                       ),
                       const SizedBox(width: 10),
                       IconButton.filledTonal(
-                        onPressed: () => showBreakTimer(context, seconds: 20),
+                        onPressed: () => openBreakExercise(context),
                         icon: const Icon(Icons.timer_outlined),
                       ),
                     ],

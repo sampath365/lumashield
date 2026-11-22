@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LumaShield</string>
+
+    <string name="channel_service_name">Protection service</string>
+    <string name="channel_service_description">Silent notification that keeps the screen filter running.</string>
+    <string name="channel_reminders_name">Eye care reminders</string>
+    <string name="channel_reminders_description">Break reminders, the 20-20-20 rule and sleep preparation.</string>
+    <string name="channel_schedule_name">Schedule changes</string>
+    <string name="channel_schedule_description">Notifications when the automatic schedule changes the filter.</string>
+
+    <string name="notification_active_title">LumaShield protection is on</string>
+    <string name="notification_active_text">%1$d%% filter · %2$d K · %3$s</string>
+    <string name="notification_paused_title">LumaShield protection is paused</string>
+    <string name="notification_paused_text">Tap to turn the screen filter back on.</string>
+    <string name="action_pause">Pause</string>
+    <string name="action_resume">Resume</string>
+
+    <string name="tile_label">LumaShield</string>
+    <string name="tile_state_on">Blue light filter on</string>
+    <string name="tile_state_off">Blue light filter off</string>
+    <string name="tile_subtitle_active">%1$d%% filter</string>
+    <string name="tile_subtitle_inactive">Filter off</string>
+
+    <string name="widget_active">Protection on · %1$d%%</string>
+    <string name="widget_inactive">Protection off</string>
+    <string name="widget_detail">%1$d K · %2$s</string>
+    <string name="widget_tap_hint">Tap the shield to turn on</string>
+</resources>

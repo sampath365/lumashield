@@ -1,0 +1,21 @@
+LumaShield 1.0.0
+
+Package id      : com.lumashield.app
+Version name    : 1.0.0
+Version code    : 1
+Min SDK         : 26 (Android 8.0)
+Target SDK      : 36
+Compile SDK     : 37
+Flutter         : 3.50.1 stable / Dart 3.14
+Built from      : git tag/commit at time of build (see repository history)
+
+Signing
+  Keystore      : upload key configured in android/key.properties
+  Key alias     : egan
+  Certificate   : CN=EGAN, OU=Mobile, O=EGAN, L=Hyderabad, ST=Telangana, C=IN
+  SHA-256       : CE:7F:AF:14:92:EB:EB:68:26:39:B8:64:0C:EB:F5:A2:EC:7D:1B:E1:70:34:29:91:EB:7E:B1:E2:14:3F:C4:AA
+
+Verify before upload
+  apksigner verify --print-certs LumaShield-1.0.0-release.apk
+  jarsigner -verify LumaShield-1.0.0-release.aab
+  sha256sum -c SHA256SUMS.txt

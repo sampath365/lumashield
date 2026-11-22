@@ -9,26 +9,36 @@ class PageShell extends StatelessWidget {
     required this.child,
     this.padding = const EdgeInsets.fromLTRB(20, 8, 20, 24),
     this.scroll = true,
+    this.maxContentWidth = 720,
   });
 
   final Widget child;
   final EdgeInsets padding;
   final bool scroll;
 
+  /// Keeps line lengths readable on tablets without shrinking phones.
+  final double maxContentWidth;
+
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
+    final content = ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: maxContentWidth),
+      child: child,
+    );
     return DecoratedBox(
       decoration: BoxDecoration(gradient: palette.heroGradient),
       child: SafeArea(
         bottom: false,
-        child: scroll
-            ? SingleChildScrollView(
-                padding: padding,
-                physics: const BouncingScrollPhysics(),
-                child: child,
-              )
-            : Padding(padding: padding, child: child),
+        child: Center(
+          child: scroll
+              ? SingleChildScrollView(
+                  padding: padding,
+                  physics: const BouncingScrollPhysics(),
+                  child: content,
+                )
+              : Padding(padding: padding, child: content),
+        ),
       ),
     );
   }

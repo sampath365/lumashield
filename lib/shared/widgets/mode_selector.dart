@@ -33,15 +33,36 @@ class ModeSelector extends StatelessWidget {
     if (!scrollable) {
       return Wrap(spacing: 8, runSpacing: 8, children: items);
     }
-    return SizedBox(
-      height: 86,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 2),
-        itemCount: items.length,
-        separatorBuilder: (_, _) => const SizedBox(width: 10),
-        itemBuilder: (_, index) => items[index],
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // 6 pills at 84 wide plus gaps need 554dp; centre them when they fit.
+        if (constraints.maxWidth >= 560) {
+          return SizedBox(
+            height: 86,
+            child: Center(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (var i = 0; i < items.length; i++) ...[
+                    if (i > 0) const SizedBox(width: 10),
+                    items[i],
+                  ],
+                ],
+              ),
+            ),
+          );
+        }
+        return SizedBox(
+          height: 86,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            itemCount: items.length,
+            separatorBuilder: (_, _) => const SizedBox(width: 10),
+            itemBuilder: (_, index) => items[index],
+          ),
+        );
+      },
     );
   }
 }

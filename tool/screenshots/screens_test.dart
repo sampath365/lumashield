@@ -4,8 +4,8 @@
 // Run with:
 //   flutter test tool/screenshots/screens_test.dart --update-goldens
 //
-// The output lands in store/screenshots/ at 1080x1920, which is what Play
-// expects. This is not part of `flutter test` (it lives outside test/) so the
+// Output lands in deploy/playstore/graphics/screenshots/ for phone (1080x1920),
+// 7 inch (1200x1920) and 10 inch (1600x2560) tablets. This is not part of `flutter test` (it lives outside test/) so the
 // regular suite stays fast and font independent.
 import 'dart:io';
 
@@ -80,6 +80,19 @@ Future<void> _loadFont(String family, List<String> paths) async {
     loader.addFont(Future.value(ByteData.sublistView(file.readAsBytesSync())));
   }
   await loader.load();
+}
+
+/// Play Store screenshot classes. Physical sizes are what gets uploaded.
+enum _Device {
+  phone('phone', Size(1080, 1920), 3),
+  tablet7('tablet-7', Size(1200, 1920), 2),
+  tablet10('tablet-10', Size(1600, 2560), 2);
+
+  const _Device(this.folder, this.physicalSize, this.pixelRatio);
+
+  final String folder;
+  final Size physicalSize;
+  final double pixelRatio;
 }
 
 void main() {
@@ -176,11 +189,12 @@ void main() {
     WidgetTester tester,
     Widget screen,
     String name, {
+    _Device device = _Device.phone,
     bool scrollDown = false,
   }) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.android;
-    tester.view.physicalSize = const Size(1080, 1920);
-    tester.view.devicePixelRatio = 3;
+    tester.view.physicalSize = device.physicalSize;
+    tester.view.devicePixelRatio = device.pixelRatio;
     addTearDown(tester.view.reset);
 
     await tester.pumpWidget(app(screen));
@@ -194,7 +208,8 @@ void main() {
 
     await expectLater(
       find.byType(MaterialApp),
-      matchesGoldenFile('../../store/screenshots/$name.png'),
+      matchesGoldenFile('../../deploy/playstore/graphics/screenshots/'
+          '${device.folder}/$name.png'),
     );
 
     // Dispose so timers and animations stop before the next capture.
@@ -245,6 +260,96 @@ void main() {
       const FilterSettingsScreen(),
       '10_filter_presets',
       scrollDown: true,
+    );
+  });
+
+  testWidgets('tablet 7 dashboard', (tester) async {
+    await capture(
+      tester,
+      const Scaffold(body: DashboardScreen()),
+      '01_dashboard',
+      device: _Device.tablet7,
+    );
+  });
+
+  testWidgets('tablet 7 filter', (tester) async {
+    await capture(
+      tester,
+      const FilterSettingsScreen(),
+      '02_filter_settings',
+      device: _Device.tablet7,
+    );
+  });
+
+  testWidgets('tablet 7 schedule', (tester) async {
+    await capture(
+      tester,
+      const Scaffold(body: ScheduleScreen()),
+      '03_schedule',
+      device: _Device.tablet7,
+    );
+  });
+
+  testWidgets('tablet 7 eye care', (tester) async {
+    await capture(
+      tester,
+      const Scaffold(body: EyeCareScreen()),
+      '04_eye_care',
+      device: _Device.tablet7,
+    );
+  });
+
+  testWidgets('tablet 7 insights', (tester) async {
+    await capture(
+      tester,
+      const Scaffold(body: StatisticsScreen()),
+      '05_insights',
+      device: _Device.tablet7,
+    );
+  });
+
+  testWidgets('tablet 10 dashboard', (tester) async {
+    await capture(
+      tester,
+      const Scaffold(body: DashboardScreen()),
+      '01_dashboard',
+      device: _Device.tablet10,
+    );
+  });
+
+  testWidgets('tablet 10 filter', (tester) async {
+    await capture(
+      tester,
+      const FilterSettingsScreen(),
+      '02_filter_settings',
+      device: _Device.tablet10,
+    );
+  });
+
+  testWidgets('tablet 10 schedule', (tester) async {
+    await capture(
+      tester,
+      const Scaffold(body: ScheduleScreen()),
+      '03_schedule',
+      device: _Device.tablet10,
+    );
+  });
+
+  testWidgets('tablet 10 eye care', (tester) async {
+    await capture(
+      tester,
+      const Scaffold(body: EyeCareScreen()),
+      '04_eye_care',
+      device: _Device.tablet10,
+    );
+  });
+
+  testWidgets('tablet 10 insights', (tester) async {
+    await capture(
+      tester,
+      const Scaffold(body: StatisticsScreen()),
+      '05_insights',
+      device: _Device.tablet10,
     );
   });
 }

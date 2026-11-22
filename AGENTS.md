@@ -24,7 +24,7 @@ cd android && ./gradlew testDebugUnitTest   # 23 JVM tests
 flutter build apk --release
 flutter build appbundle --release
 
-# Store screenshots (writes store/screenshots/*.png at 1080x1920)
+# Store screenshots -> deploy/playstore/graphics/screenshots/{phone,tablet-7,tablet-10}
 flutter test tool/screenshots/screens_test.dart --update-goldens
 ```
 

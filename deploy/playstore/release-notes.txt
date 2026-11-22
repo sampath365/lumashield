@@ -1,0 +1,9 @@
+First release.
+
+• System wide blue light filter with a live before/after preview
+• 0-100% reduction and 1900K-6500K colour temperature, plus custom colours
+• Sunset to sunrise and custom schedules that survive a reboot
+• Per-app profiles to lift the filter for camera and video apps
+• 20-20-20 reminders, break timer, reading mode and sleep wind down
+• Daily and weekly eye comfort reports, stored only on your device
+• No account, no ads, and no internet permission

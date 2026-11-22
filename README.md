@@ -7,7 +7,7 @@ sunrise, and reminds you to rest your eyes. Everything runs on the device: no
 account, no cloud, no analytics, no screen capture.
 
 <p align="center">
-  <img src="store/play_icon_512.png" width="120" alt="LumaShield icon" />
+  <img src="deploy/playstore/graphics/app-icon-512.png" width="120" alt="LumaShield icon" />
 </p>
 
 ---
@@ -19,15 +19,15 @@ Rendered from the real widget tree with `tool/screenshots/screens_test.dart`
 
 | Dashboard | Filter settings | Schedule |
 | --- | --- | --- |
-| ![Dashboard](store/screenshots/01_dashboard.png) | ![Filter settings](store/screenshots/02_filter_settings.png) | ![Schedule](store/screenshots/03_schedule.png) |
+| ![Dashboard](deploy/playstore/graphics/screenshots/phone/01_dashboard.png) | ![Filter settings](deploy/playstore/graphics/screenshots/phone/02_filter_settings.png) | ![Schedule](deploy/playstore/graphics/screenshots/phone/03_schedule.png) |
 
 | Eye care | Insights | Appearance |
 | --- | --- | --- |
-| ![Eye care](store/screenshots/04_eye_care.png) | ![Insights](store/screenshots/05_insights.png) | ![Appearance](store/screenshots/06_appearance.png) |
+| ![Eye care](deploy/playstore/graphics/screenshots/phone/04_eye_care.png) | ![Insights](deploy/playstore/graphics/screenshots/phone/05_insights.png) | ![Appearance](deploy/playstore/graphics/screenshots/phone/06_appearance.png) |
 
 | Onboarding | Permissions | Reading mode |
 | --- | --- | --- |
-| ![Onboarding](store/screenshots/07_onboarding.png) | ![Permissions](store/screenshots/08_permissions.png) | ![Reading mode](store/screenshots/09_reading_mode.png) |
+| ![Onboarding](deploy/playstore/graphics/screenshots/phone/07_onboarding.png) | ![Permissions](deploy/playstore/graphics/screenshots/phone/08_permissions.png) | ![Reading mode](deploy/playstore/graphics/screenshots/phone/09_reading_mode.png) |
 
 ---
 
@@ -217,16 +217,33 @@ statement that the app cannot upload anything.
 
 ---
 
+## Deployment pack
+
+Everything the Play Console asks for lives in [`deploy/`](deploy/README.md):
+
+```
+deploy/playstore/
+  listing.md              name, short + full description, category
+  release-notes.txt       "What's new"
+  data-safety.md          data safety answers + permission justifications
+  content-rating.md       IARC questionnaire answers
+  privacy-policy.md       host publicly, then link it
+  graphics/               icon, feature graphic, lockup, adaptive layers
+  graphics/screenshots/   phone (1080x1920), 7" and 10" tablet sets
+  binaries/               signed AAB + APK with SHA-256 sums
+```
+
+
 ## Release checklist
 
-See [`store/PLAY_STORE.md`](store/PLAY_STORE.md) for the listing copy, data
+See [`deploy/playstore/listing.md`](deploy/playstore/listing.md) for the listing copy, data
 safety answers and the step by step upload. The short version:
 
 1. `flutter build appbundle --release`
 2. Upload `build/app/outputs/bundle/release/app-release.aab`
-3. Paste the listing text from `store/PLAY_STORE.md`
+3. Paste the listing text from `deploy/playstore/listing.md`
 4. Answer the data safety form as "no data collected, no data shared"
-5. Provide the privacy policy from `store/PRIVACY.md`
+5. Provide the privacy policy from `deploy/playstore/privacy-policy.md`
 
 ---
 

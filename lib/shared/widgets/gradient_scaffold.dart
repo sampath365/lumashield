@@ -13,6 +13,7 @@ class GradientScaffold extends StatelessWidget {
     this.floatingActionButton,
     this.padding = const EdgeInsets.fromLTRB(20, 0, 20, 0),
     this.safeBottom = true,
+    this.maxContentWidth = 720,
   });
 
   final Widget child;
@@ -21,6 +22,7 @@ class GradientScaffold extends StatelessWidget {
   final Widget? floatingActionButton;
   final EdgeInsets padding;
   final bool safeBottom;
+  final double maxContentWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,12 @@ class GradientScaffold extends StatelessWidget {
         decoration: BoxDecoration(gradient: palette.heroGradient),
         child: SafeArea(
           bottom: safeBottom,
-          child: Padding(padding: padding, child: child),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxContentWidth),
+              child: Padding(padding: padding, child: child),
+            ),
+          ),
         ),
       ),
     );

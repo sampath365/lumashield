@@ -9,6 +9,24 @@ import '../../shared/widgets/gradient_scaffold.dart';
 import '../../shared/widgets/section_header.dart';
 import '../../shared/widgets/setting_tile.dart';
 
+/// Opens a link and tells the user when nothing can handle it, which is common
+/// for `mailto:` on a device without a mail account.
+Future<void> _openLink(
+  BuildContext context,
+  Uri uri, {
+  required String fallback,
+}) async {
+  var launched = false;
+  try {
+    launched = await launchUrl(uri);
+  } catch (_) {
+    launched = false;
+  }
+  if (!launched && context.mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(fallback)));
+  }
+}
+
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
 
@@ -105,8 +123,14 @@ class AboutScreen extends StatelessWidget {
                 title: 'Contact support',
                 subtitle: AppConstants.supportEmail,
                 trailing: const Icon(Icons.open_in_new_rounded, size: 18),
-                onTap: () => launchUrl(
-                  Uri.parse('mailto:${AppConstants.supportEmail}?subject=LumaShield%20support'),
+                onTap: () => _openLink(
+                  context,
+                  Uri.parse(
+                    'mailto:${AppConstants.supportEmail}?subject=LumaShield%20support',
+                  ),
+                  fallback:
+                      'No email app is set up on this device. Write to '
+                      '${AppConstants.supportEmail}',
                 ),
               ),
             ],

@@ -7,12 +7,15 @@ class PageShell extends StatelessWidget {
   const PageShell({
     super.key,
     required this.child,
-    this.padding = const EdgeInsets.fromLTRB(20, 8, 20, 24),
+    this.padding = const EdgeInsets.fromLTRB(20, 8, 20, 104),
     this.scroll = true,
     this.maxContentWidth = 720,
   });
 
   final Widget child;
+
+  /// The bottom inset keeps the last row above the floating navigation bar,
+  /// which is drawn over the body by the home shell.
   final EdgeInsets padding;
   final bool scroll;
 

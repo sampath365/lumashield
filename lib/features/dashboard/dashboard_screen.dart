@@ -96,7 +96,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 ),
               );
             },
-            child: Text('Fix it', style: TextStyle(color: palette.isDark ? Colors.black : Colors.white)),
+            child: Text(
+              'Fix it',
+              style: TextStyle(
+                color: palette.isDark ? Colors.black : Colors.white,
+              ),
+            ),
           ),
         ],
       ),
@@ -116,7 +121,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final serviceRunning = PlatformCapabilities.backgroundService
         ? status.running
         : filter.enabled;
-    final nextActivation = status.nextActivation ??
+    final nextActivation =
+        status.nextActivation ??
         (schedule.enabled ? ScheduleCalculator.nextActivation(schedule) : null);
     final strength = filter.intensity;
 
@@ -125,12 +131,18 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _Header(greeting: _greeting, active: filter.enabled),
-          if (PlatformCapabilities.isAndroid && !permissions.overlay && !permissions.loading)
-            _PermissionBanner(onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(builder: (_) => const PermissionSetupScreen()),
-              );
-            }),
+          if (PlatformCapabilities.isAndroid &&
+              !permissions.overlay &&
+              !permissions.loading)
+            _PermissionBanner(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const PermissionSetupScreen(),
+                  ),
+                );
+              },
+            ),
           const SizedBox(height: 12),
           _StatusChip(
             active: filter.enabled,
@@ -157,9 +169,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               filter.enabled
                   ? 'Tap to pause · ${ColorTemperature.labelFor(filter.kelvin)} ${filter.kelvin}K'
                   : 'Tap to protect your eyes',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: palette.textMuted,
-              ),
+              style: Theme.of(context).textTheme.bodySmall
+                  ?.copyWith(color: palette.textMuted),
             ),
           ),
           const SizedBox(height: 8),
@@ -167,7 +178,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             child: GestureDetector(
               onTap: () => ref.read(homeTabProvider.notifier).select(2),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: palette.surfaceHigh.withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(12),
@@ -176,16 +190,23 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.timer_outlined, size: 14, color: palette.textMuted),
+                    Icon(
+                      Icons.timer_outlined,
+                      size: 14,
+                      color: palette.textMuted,
+                    ),
                     const SizedBox(width: 6),
-                    Text(
-                      status.nextBreakIn == null
-                          ? 'Eye breaks are off · tap to enable'
-                          : (status.nextBreakIn! <= 0
-                                ? 'Break is due · tap to start'
-                                : 'Next eye break in ${status.nextBreakIn} min'),
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: palette.textSecondary,
+                    Flexible(
+                      child: Text(
+                        status.nextBreakIn == null
+                            ? 'Eye breaks are off · tap to enable'
+                            : (status.nextBreakIn! <= 0
+                                  ? 'Break is due · tap to start'
+                                  : 'Next eye break in ${status.nextBreakIn} min'),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.labelSmall
+                            ?.copyWith(color: palette.textSecondary),
                       ),
                     ),
                   ],
@@ -199,7 +220,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               Expanded(
                 child: StatTile(
                   label: 'TODAY',
-                  value: Formatters.duration(Duration(minutes: stats.todayMinutes)),
+                  value: Formatters.duration(
+                    Duration(minutes: stats.todayMinutes),
+                  ),
                   icon: Icons.timelapse_rounded,
                   caption: '${stats.totalSessions} sessions saved',
                 ),
@@ -231,7 +254,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           ),
           ModeSelector(
             selected: filter.mode,
-            onSelected: (mode) => ref.read(filterControllerProvider.notifier).setMode(mode),
+            onSelected: (mode) =>
+                ref.read(filterControllerProvider.notifier).setMode(mode),
           ),
           const SizedBox(height: 22),
           SectionHeader(
@@ -240,7 +264,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             action: IconButton(
               tooltip: 'All filter settings',
               onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(builder: (_) => const FilterSettingsScreen()),
+                MaterialPageRoute<void>(
+                  builder: (_) => const FilterSettingsScreen(),
+                ),
               ),
               icon: const Icon(Icons.tune_rounded),
             ),
@@ -309,7 +335,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             action: IconButton(
               tooltip: 'Notification settings',
               onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(builder: (_) => const NotificationSettingsScreen()),
+                MaterialPageRoute<void>(
+                  builder: (_) => const NotificationSettingsScreen(),
+                ),
               ),
               icon: const Icon(Icons.notifications_none_rounded),
             ),
@@ -334,36 +362,44 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            Formatters.duration(Duration(minutes: stats.todayMinutes)),
-                            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
+                            Formatters.duration(
+                              Duration(minutes: stats.todayMinutes),
                             ),
+                            style: Theme.of(context).textTheme.headlineMedium
+                                ?.copyWith(fontWeight: FontWeight.w700),
                           ),
                           Text(
                             'protected today',
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: palette.textMuted,
-                            ),
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(color: palette.textMuted),
                           ),
                         ],
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: palette.accentSoft,
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.local_fire_department_rounded, size: 16, color: palette.accent),
+                          Icon(
+                            Icons.local_fire_department_rounded,
+                            size: 16,
+                            color: palette.accent,
+                          ),
                           const SizedBox(width: 6),
                           Text(
                             '${stats.currentStreakDays} day streak',
-                            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                              color: palette.accent,
-                              fontWeight: FontWeight.w700,
-                            ),
+                            style: Theme.of(context).textTheme.labelMedium
+                                ?.copyWith(
+                                  color: palette.accent,
+                                  fontWeight: FontWeight.w700,
+                                ),
                           ),
                         ],
                       ),
@@ -383,16 +419,24 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Daily goal 4h',
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: palette.textMuted,
+                    Flexible(
+                      child: Text(
+                        'Daily goal 4h',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.labelSmall
+                            ?.copyWith(color: palette.textMuted),
                       ),
                     ),
-                    Text(
-                      'This week ${Formatters.duration(Duration(minutes: stats.weekMinutes))}',
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: palette.textSecondary,
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        'This week ${Formatters.duration(Duration(minutes: stats.weekMinutes))}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.end,
+                        style: Theme.of(context).textTheme.labelSmall
+                            ?.copyWith(color: palette.textSecondary),
                       ),
                     ),
                   ],
@@ -406,7 +450,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(builder: (_) => const FilterSettingsScreen()),
+                    MaterialPageRoute<void>(
+                      builder: (_) => const FilterSettingsScreen(),
+                    ),
                   ),
                   icon: const Icon(Icons.palette_outlined, size: 18),
                   label: const Text('Filter settings'),
@@ -426,9 +472,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           Center(
             child: Text(
               '${AppConstants.appName} · filter stays on device',
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: palette.textMuted,
-              ),
+              style: Theme.of(context).textTheme.labelSmall
+                  ?.copyWith(color: palette.textMuted),
             ),
           ),
         ],
@@ -482,9 +527,8 @@ class _Header extends StatelessWidget {
               ),
               Text(
                 '$greeting · ${active ? 'shields up' : 'shields down'}',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: palette.textMuted,
-                ),
+                style: Theme.of(context).textTheme.bodySmall
+                    ?.copyWith(color: palette.textMuted),
               ),
             ],
           ),
@@ -533,10 +577,8 @@ class _StatusChip extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               label,
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: color,
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(context).textTheme.labelMedium
+                  ?.copyWith(color: color, fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -571,10 +613,8 @@ class _PermissionBanner extends StatelessWidget {
               Expanded(
                 child: Text(
                   'Overlay permission is missing, so the filter cannot cover other apps.',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: palette.textPrimary,
-                    height: 1.35,
-                  ),
+                  style: Theme.of(context).textTheme.bodySmall
+                      ?.copyWith(color: palette.textPrimary, height: 1.35),
                 ),
               ),
               const Icon(Icons.chevron_right_rounded, size: 20),
@@ -596,30 +636,30 @@ class _ServiceCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final palette = context.palette;
     final options = ref.watch(serviceOptionsControllerProvider);
-    Widget row(IconData icon, String label, String value, {Color? color}) => Padding(
-      padding: const EdgeInsets.symmetric(vertical: 9),
-      child: Row(
-        children: [
-          Icon(icon, size: 17, color: palette.textMuted),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              label,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: palette.textSecondary,
+    Widget row(IconData icon, String label, String value, {Color? color}) =>
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 9),
+          child: Row(
+            children: [
+              Icon(icon, size: 17, color: palette.textMuted),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  label,
+                  style: Theme.of(context).textTheme.bodySmall
+                      ?.copyWith(color: palette.textSecondary),
+                ),
               ),
-            ),
+              Text(
+                value,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: color ?? palette.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
-          Text(
-            value,
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: color ?? palette.textPrimary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
+        );
 
     return GlassCard(
       padding: const EdgeInsets.fromLTRB(18, 10, 18, 10),
@@ -629,7 +669,9 @@ class _ServiceCard extends ConsumerWidget {
             Icons.power_settings_new_rounded,
             'Background service',
             status.supported
-                ? (status.running ? 'Running' : (active ? 'Starting' : 'Stopped'))
+                ? (status.running
+                      ? 'Running'
+                      : (active ? 'Starting' : 'Stopped'))
                 : 'Not available on iOS',
             color: status.running ? palette.success : palette.textMuted,
           ),

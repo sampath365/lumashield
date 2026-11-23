@@ -470,7 +470,9 @@ class _PresetTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: palette.border),
       ),
-      child: ListTile(
+      child: Material(
+        type: MaterialType.transparency,
+        child: ListTile(
         onTap: onApply,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         leading: Container(
@@ -502,6 +504,7 @@ class _PresetTile extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }

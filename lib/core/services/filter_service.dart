@@ -50,6 +50,19 @@ class FilterService {
         });
   }
 
+  /// Raw native events, used for signals that are not part of the status map
+  /// (for example `eyeBreakDue`).
+  Stream<Map<String, dynamic>> rawEvents() {
+    if (!isSupported) return const Stream.empty();
+    return _events
+        .receiveBroadcastStream()
+        .where((event) => event is Map)
+        .map<Map<String, dynamic>>((event) => (event as Map).cast<String, dynamic>())
+        .handleError((Object error) {
+          debugPrint('event stream error: $error');
+        });
+  }
+
   Future<bool> _bool(String method, {bool fallback = false}) async {
     if (!isSupported) return fallback;
     try {

@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../core/theme/app_palette.dart';
@@ -7,35 +8,35 @@ import '../../core/theme/app_theme.dart';
 
 /// The hero control.
 ///
-/// The outer ring is the eye comfort score: it drains as screen time adds up and
-/// climbs back when a break is taken, so the circle visibly grows and shrinks
-/// through the day. The thin inner ring is the filter strength. Tapping the orb
-/// turns the filter on or off.
+/// The ring is a circular slider: drag your finger around it to set the blue
+/// light reduction, with haptic ticks every five percent. The thick arc grows
+/// and shrinks with the percentage, and the power button in the middle toggles
+/// the filter. The thin inner arc is the eye comfort score.
 class ProtectionOrb extends StatefulWidget {
   const ProtectionOrb({
     super.key,
     required this.active,
-    required this.score,
-    required this.filterStrength,
+    required this.strength,
+    required this.eyeScore,
     required this.statusLabel,
-    required this.onTap,
+    required this.onToggle,
+    required this.onStrengthChanged,
     this.size = 260,
     this.enabled = true,
-    this.nextBreakIn,
   });
 
   final bool active;
 
-  /// Eye comfort percentage, 0-100.
-  final int score;
+  /// Blue light reduction, 0-100. Dragging around the ring sets this.
+  final int strength;
 
-  /// Blue light filter percentage, 0-100.
-  final int filterStrength;
+  /// Eye comfort percentage, shown as the thin inner ring.
+  final int eyeScore;
   final String statusLabel;
-  final VoidCallback onTap;
+  final VoidCallback onToggle;
+  final ValueChanged<int> onStrengthChanged;
   final double size;
   final bool enabled;
-  final int? nextBreakIn;
 
   @override
   State<ProtectionOrb> createState() => _ProtectionOrbState();
@@ -47,10 +48,31 @@ class _ProtectionOrbState extends State<ProtectionOrb> with TickerProviderStateM
     duration: const Duration(seconds: 5),
   );
 
+  bool _dragging = false;
+  int _lastHapticStep = -1;
+
   @override
   void initState() {
     super.initState();
     if (widget.active) _breath.repeat(reverse: true);
+  }
+
+  /// Turns a touch position into a percentage around the ring, starting at the
+  /// top and running clockwise.
+  void _handleRingTouch(Offset local, Size size) {
+    if (!widget.enabled) return;
+    final centre = Offset(size.width / 2, size.height / 2);
+    final vector = local - centre;
+    if (vector.distance < size.shortestSide * 0.24) return; // ignore the centre
+    var angle = math.atan2(vector.dy, vector.dx) + math.pi / 2;
+    if (angle < 0) angle += 2 * math.pi;
+    final value = ((angle / (2 * math.pi)) * 100).round().clamp(0, 100);
+    final step = value ~/ 5;
+    if (step != _lastHapticStep) {
+      _lastHapticStep = step;
+      HapticFeedback.selectionClick();
+    }
+    if (value != widget.strength) widget.onStrengthChanged(value);
   }
 
   @override
@@ -74,7 +96,7 @@ class _ProtectionOrbState extends State<ProtectionOrb> with TickerProviderStateM
   Widget build(BuildContext context) {
     final palette = context.palette;
     return TweenAnimationBuilder<double>(
-      tween: Tween<double>(end: widget.score.toDouble()),
+      tween: Tween<double>(end: widget.eyeScore.toDouble()),
       duration: const Duration(milliseconds: 800),
       curve: Curves.easeOutCubic,
       builder: (context, animatedScore, _) =>
@@ -84,17 +106,24 @@ class _ProtectionOrbState extends State<ProtectionOrb> with TickerProviderStateM
 
   Widget _buildOrb(BuildContext context, AppPalette palette, double animatedScore) {
     final score = animatedScore.round();
+    final strength = widget.strength;
 
     return Semantics(
-      button: true,
-      label: widget.active
-          ? 'Blue light filter on. Eye comfort $score percent. '
-                'Double tap to turn the filter off.'
-          : 'Blue light filter off. Eye comfort $score percent. '
-                'Double tap to turn the filter on.',
+      slider: true,
+      label:
+          '${widget.statusLabel}. Blue light reduction $strength percent. '
+          'Eye comfort $score percent. Drag around the ring to change it.',
+      value: '$strength%',
       child: GestureDetector(
-        onTap: widget.enabled ? widget.onTap : null,
         behavior: HitTestBehavior.opaque,
+        onVerticalDragStart: (_) => setState(() => _dragging = true),
+        onHorizontalDragStart: (_) => setState(() => _dragging = true),
+        onVerticalDragEnd: (_) => setState(() => _dragging = false),
+        onHorizontalDragEnd: (_) => setState(() => _dragging = false),
+        onVerticalDragUpdate: (details) =>
+            _handleRingTouch(details.localPosition, Size.square(widget.size)),
+        onHorizontalDragUpdate: (details) =>
+            _handleRingTouch(details.localPosition, Size.square(widget.size)),
         child: AnimatedBuilder(
           animation: _breath,
           builder: (context, _) {
@@ -109,15 +138,15 @@ class _ProtectionOrbState extends State<ProtectionOrb> with TickerProviderStateM
                   CustomPaint(
                     size: Size.square(widget.size),
                     painter: _OrbPainter(
-                      score: animatedScore / 100,
-                      filterStrength: widget.filterStrength / 100,
-                      accent: scoreColour,
-                      filterColour: palette.accent,
-                      warm: palette.warm,
+                      strength: strength / 100,
+                      eyeScore: animatedScore / 100,
+                      accent: palette.accent,
+                      eyeColour: scoreColour,
                       track: palette.surfaceHigh,
                       pulse: pulse,
                       isDark: palette.isDark,
-                      showFilterRing: widget.active,
+                      active: widget.active,
+                      dragging: _dragging,
                     ),
                   ),
                   Transform.scale(
@@ -155,18 +184,20 @@ class _ProtectionOrbState extends State<ProtectionOrb> with TickerProviderStateM
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            '$score%',
-                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                              color: palette.textPrimary,
+                          AnimatedDefaultTextStyle(
+                            duration: const Duration(milliseconds: 150),
+                            style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                              color: widget.active ? palette.textPrimary : palette.textMuted,
                               fontWeight: FontWeight.w700,
                               letterSpacing: -1,
+                              fontSize: _dragging ? 48 : 44,
                             ),
+                            child: Text('$strength%'),
                           ),
                           Text(
-                            'EYE COMFORT',
+                            widget.active ? 'BLUE LIGHT' : 'BLUE LIGHT OFF',
                             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: scoreColour,
+                              color: widget.active ? palette.accent : palette.textMuted,
                               letterSpacing: 1.6,
                               fontWeight: FontWeight.w700,
                             ),
@@ -180,16 +211,12 @@ class _ProtectionOrbState extends State<ProtectionOrb> with TickerProviderStateM
                                 height: 6,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: widget.active
-                                      ? palette.accent
-                                      : palette.textMuted,
+                                  color: scoreColour,
                                 ),
                               ),
                               const SizedBox(width: 6),
                               Text(
-                                widget.active
-                                    ? 'Filter ${widget.filterStrength}%'
-                                    : 'Filter off',
+                                'Eyes $score%',
                                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                   color: palette.textMuted,
                                   fontWeight: FontWeight.w600,
@@ -198,21 +225,24 @@ class _ProtectionOrbState extends State<ProtectionOrb> with TickerProviderStateM
                             ],
                           ),
                           const SizedBox(height: 10),
-                          Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: widget.active
-                                  ? palette.accent
-                                  : palette.textMuted.withValues(alpha: 0.18),
-                            ),
-                            child: Icon(
-                              Icons.power_settings_new_rounded,
-                              size: 20,
-                              color: widget.active
-                                  ? (palette.isDark ? const Color(0xFF1B1206) : Colors.white)
-                                  : palette.textMuted,
+                          GestureDetector(
+                            onTap: widget.enabled ? widget.onToggle : null,
+                            child: Container(
+                              width: 42,
+                              height: 42,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: widget.active
+                                    ? palette.accent
+                                    : palette.textMuted.withValues(alpha: 0.18),
+                              ),
+                              child: Icon(
+                                Icons.power_settings_new_rounded,
+                                size: 21,
+                                color: widget.active
+                                    ? (palette.isDark ? const Color(0xFF1B1206) : Colors.white)
+                                    : palette.textMuted,
+                              ),
                             ),
                           ),
                         ],
@@ -238,26 +268,29 @@ class _ProtectionOrbState extends State<ProtectionOrb> with TickerProviderStateM
 
 class _OrbPainter extends CustomPainter {
   _OrbPainter({
-    required this.score,
-    required this.filterStrength,
+    required this.strength,
+    required this.eyeScore,
     required this.accent,
-    required this.filterColour,
-    required this.warm,
+    required this.eyeColour,
     required this.track,
     required this.pulse,
     required this.isDark,
-    required this.showFilterRing,
+    required this.active,
+    required this.dragging,
   });
 
-  final double score;
-  final double filterStrength;
+  /// Blue light reduction, 0-1.
+  final double strength;
+
+  /// Eye comfort score, 0-1.
+  final double eyeScore;
   final Color accent;
-  final Color filterColour;
-  final Color warm;
+  final Color eyeColour;
   final Color track;
   final double pulse;
   final bool isDark;
-  final bool showFilterRing;
+  final bool active;
+  final bool dragging;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -268,15 +301,19 @@ class _OrbPainter extends CustomPainter {
     if (pulse > 0) {
       final glow = Paint()
         ..shader = RadialGradient(
-          colors: [accent.withValues(alpha: 0.20 * pulse), Colors.transparent],
+          colors: [
+            (active ? accent : eyeColour).withValues(alpha: 0.20 * pulse),
+            Colors.transparent,
+          ],
         ).createShader(Rect.fromCircle(center: center, radius: radius + 18));
       canvas.drawCircle(center, radius + 18, glow);
     }
 
-    // Tick marks give the ring a watch face quality.
+    // Tick marks give the ring a watch face quality and read as slider stops.
     for (var i = 0; i < 60; i++) {
       final angle = (i / 60) * 2 * math.pi - math.pi / 2;
       final major = i % 5 == 0;
+      final lit = (i / 60) <= strength;
       final inner = Offset(
         center.dx + math.cos(angle) * (radius + (major ? 3 : 6)),
         center.dy + math.sin(angle) * (radius + (major ? 3 : 6)),
@@ -289,13 +326,15 @@ class _OrbPainter extends CustomPainter {
         inner,
         outer,
         Paint()
-          ..color = track.withValues(alpha: isDark ? 0.9 : 0.6)
-          ..strokeWidth = major ? 2 : 1
+          ..color = lit
+              ? accent.withValues(alpha: dragging ? 0.9 : 0.65)
+              : track.withValues(alpha: isDark ? 0.55 : 0.45)
+          ..strokeWidth = major ? 2.2 : 1.0
           ..strokeCap = StrokeCap.round,
       );
     }
 
-    // Eye comfort ring.
+    // Blue light ring (the slider track and value).
     canvas.drawArc(
       rect,
       -math.pi / 2,
@@ -303,41 +342,49 @@ class _OrbPainter extends CustomPainter {
       false,
       Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 11
+        ..strokeWidth = 12
         ..strokeCap = StrokeCap.round
         ..color = track,
     );
 
-    if (score > 0.001) {
+    if (strength > 0.001) {
       canvas.drawArc(
         rect,
         -math.pi / 2,
-        2 * math.pi * score.clamp(0.0, 1.0),
+        2 * math.pi * strength.clamp(0.0, 1.0),
         false,
         Paint()
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 11
+          ..strokeWidth = 12
           ..strokeCap = StrokeCap.round
           ..shader = SweepGradient(
             colors: [
-              accent.withValues(alpha: 0.65),
-              accent,
-              accent.withValues(alpha: 0.85),
+              accent.withValues(alpha: active ? 0.75 : 0.35),
+              active ? accent : accent.withValues(alpha: 0.45),
+              accent.withValues(alpha: active ? 0.9 : 0.4),
             ],
-            stops: const [0, 0.75, 1],
+            stops: const [0, 0.72, 1],
             transform: const GradientRotation(-math.pi / 2),
           ).createShader(rect),
       );
 
-      final endAngle = -math.pi / 2 + 2 * math.pi * score.clamp(0.0, 1.0);
+      // Handle you can see yourself dragging.
+      final endAngle = -math.pi / 2 + 2 * math.pi * strength.clamp(0.0, 1.0);
       final knob = Offset(
         center.dx + math.cos(endAngle) * radius,
         center.dy + math.sin(endAngle) * radius,
       );
-      canvas.drawCircle(knob, 6, Paint()..color = Colors.white);
+      if (dragging) {
+        canvas.drawCircle(
+          knob,
+          16,
+          Paint()..color = accent.withValues(alpha: 0.22),
+        );
+      }
+      canvas.drawCircle(knob, dragging ? 8 : 6.5, Paint()..color = Colors.white);
       canvas.drawCircle(
         knob,
-        10,
+        dragging ? 12 : 10,
         Paint()
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2
@@ -345,42 +392,42 @@ class _OrbPainter extends CustomPainter {
       );
     }
 
-    // Filter strength ring, inside the eye score ring.
-    if (showFilterRing) {
-      final innerRadius = radius - 17;
-      final innerRect = Rect.fromCircle(center: center, radius: innerRadius);
+    // Eye comfort, a thin arc just inside the slider.
+    final innerRadius = radius - 17;
+    final innerRect = Rect.fromCircle(center: center, radius: innerRadius);
+    canvas.drawArc(
+      innerRect,
+      -math.pi / 2,
+      2 * math.pi,
+      false,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 4
+        ..color = track.withValues(alpha: 0.75),
+    );
+    if (eyeScore > 0.001) {
       canvas.drawArc(
         innerRect,
         -math.pi / 2,
-        2 * math.pi,
+        2 * math.pi * eyeScore.clamp(0.0, 1.0),
         false,
         Paint()
           ..style = PaintingStyle.stroke
           ..strokeWidth = 4
-          ..color = track.withValues(alpha: 0.75),
+          ..strokeCap = StrokeCap.round
+          ..color = eyeColour.withValues(alpha: 0.85),
       );
-      if (filterStrength > 0.001) {
-        canvas.drawArc(
-          innerRect,
-          -math.pi / 2,
-          2 * math.pi * filterStrength.clamp(0.0, 1.0),
-          false,
-          Paint()
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 4
-            ..strokeCap = StrokeCap.round
-            ..color = filterColour.withValues(alpha: 0.9),
-        );
-      }
     }
   }
 
   @override
   bool shouldRepaint(covariant _OrbPainter oldDelegate) =>
-      oldDelegate.score != score ||
-      oldDelegate.filterStrength != filterStrength ||
+      oldDelegate.strength != strength ||
+      oldDelegate.eyeScore != eyeScore ||
       oldDelegate.pulse != pulse ||
       oldDelegate.accent != accent ||
+      oldDelegate.eyeColour != eyeColour ||
       oldDelegate.track != track ||
-      oldDelegate.showFilterRing != showFilterRing;
+      oldDelegate.active != active ||
+      oldDelegate.dragging != dragging;
 }

@@ -30,7 +30,7 @@ class ProtectionStatus {
     this.nextBreakIn,
     this.eyeStatusEnabled = true,
     this.breaksEnabled = true,
-    this.breakIntervalMin = 20,
+    this.breakIntervalMin = 30,
   });
 
   final bool supported;
@@ -101,7 +101,7 @@ class ProtectionStatus {
       nextBreakIn: (map['nextBreakIn'] as num?)?.toInt(),
       eyeStatusEnabled: map['eyeStatusEnabled'] as bool? ?? true,
       breaksEnabled: map['breaksEnabled'] as bool? ?? true,
-      breakIntervalMin: (map['breakIntervalMin'] as num?)?.toInt() ?? 20,
+      breakIntervalMin: (map['breakIntervalMin'] as num?)?.toInt() ?? 30,
     );
   }
 

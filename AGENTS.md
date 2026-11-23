@@ -59,6 +59,9 @@ a `package:flutter/material.dart` import.
   This is verified by `android/app/src/test/.../FilterConfigTest.kt`.
 * Schedule boundaries are computed by `SchedulePlanner` + `SolarCalc` and armed
   with `AlarmManager`; exact alarms degrade to inexact when not permitted.
+* `ProtectionOrb` is a circular slider: drag handlers convert the touch angle
+  into a 0-100 value and call `onStrengthChanged`. The power button inside the
+  circle is a separate tap target, so dragging never toggles the filter.
 * Eye breaks are owned by `EyeBreakScheduler` + `EyeBreakReceiver` (native, so
   they fire with the app closed). The percentage in the status bar comes from
   `EyeScore` and `EyeStatusNotifier`; the Dart side only displays it.

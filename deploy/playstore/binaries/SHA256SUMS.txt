@@ -1,2 +1,2 @@
-bc58ccadffb0b5f44140021c512d6202d3340cab2871ea0508625f26ba3a7d7e  LumaShield-1.0.0-release.aab
-e05c91acac72f1fbfda787ef99d42566ec3b1bdd58a258d736c902b2cda25c12  LumaShield-1.0.0-release.apk
+84529a9f42871129c1ccbed5b9e498d8909391fb58f0d1ae783674b4110edc1e  LumaShield-1.0.0-release.aab
+6025b6b40f3f1601df15b25e0258c6ca5460f9b3097c33e07984b7a44010e2c6  LumaShield-1.0.0-release.apk

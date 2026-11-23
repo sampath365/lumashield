@@ -21,7 +21,7 @@ phone.
 
 BLUE LIGHT FILTER
 • Turn protection on with one tap from the dashboard orb
-• Adjust blue light reduction from 0% to 100%
+• Drag the home circle like a dial to set blue light reduction from 0% to 100%
 • Fine tune colour temperature from 1900K candle light to 6500K neutral
 • Warm, amber, orange, yellow and warm red palettes, plus a custom colour picker
 • Live before/after preview that matches the real overlay exactly
@@ -36,7 +36,7 @@ AUTOMATIC PROTECTION
 • Quick settings tile and home screen widget for one tap control
 
 EYE CARE
-• Eye breaks every 20, 30 or 45 minutes, with a guided 3 step exercise
+• Eye breaks every 20, 30 or 45 minutes (30 by default) with a guided exercise
 • A live eye comfort percentage in the status bar, so you can see it drop
 • Eye strain and continuous use reminders
 • Sleep wind down cue and a daily eye comfort report

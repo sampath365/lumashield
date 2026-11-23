@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 class EyeCareSettings {
   const EyeCareSettings({
     this.twentyRuleEnabled = true,
-    this.twentyIntervalMin = 20,
+    this.twentyIntervalMin = 30,
     this.twentyBreakSec = 20,
     this.eyeStrainEnabled = true,
     this.eyeStrainIntervalMin = 45,

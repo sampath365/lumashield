@@ -22,12 +22,34 @@ class LumaShieldApp extends ConsumerStatefulWidget {
 class _LumaShieldAppState extends ConsumerState<LumaShieldApp> with WidgetsBindingObserver {
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
   bool _breakScheduled = false;
+  StreamSubscription<Map<String, dynamic>>? _breakWatcher;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) => _consumeLaunchAction());
+    // The native alarm tells us when a break is due, so the owl exercise can
+    // open by itself while the app is on screen. In the background Android
+    // shows the notification instead; apps cannot force a full screen window.
+    _breakWatcher = ref.read(filterServiceProvider).rawEvents().listen((event) {
+      if (event['eyeBreakDue'] != null) _openBreakIfIdle();
+    });
+  }
+
+  Future<void> _openBreakIfIdle() async {
+    if (!mounted || _breakScheduled) return;
+    if (WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) return;
+    final navigator = _navigatorKey.currentState;
+    if (navigator == null || !navigator.mounted) return;
+    _breakScheduled = true;
+    await navigator.push<bool>(
+      MaterialPageRoute<bool>(
+        builder: (_) => const BreakExerciseScreen(),
+        fullscreenDialog: true,
+      ),
+    );
+    _breakScheduled = false;
   }
 
   /// Opens the guided break when the app was started from a reminder.
@@ -49,6 +71,7 @@ class _LumaShieldAppState extends ConsumerState<LumaShieldApp> with WidgetsBindi
 
   @override
   void dispose() {
+    _breakWatcher?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }

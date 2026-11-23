@@ -153,13 +153,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           Center(
             child: ProtectionOrb(
               active: filter.enabled,
-              score: status.eyeScore,
-              filterStrength: strength,
-              nextBreakIn: status.nextBreakIn,
+              strength: strength,
+              eyeScore: status.eyeScore,
               statusLabel: filter.enabled
                   ? (serviceRunning ? 'Protection active' : 'Starting…')
                   : 'Protection paused',
-              onTap: _toggleProtection,
+              onToggle: _toggleProtection,
+              onStrengthChanged: (value) =>
+                  ref.read(filterControllerProvider.notifier).setIntensity(value),
               size: 262,
             ),
           ),
@@ -167,8 +168,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           Center(
             child: Text(
               filter.enabled
-                  ? 'Tap to pause · ${ColorTemperature.labelFor(filter.kelvin)} ${filter.kelvin}K'
-                  : 'Tap to protect your eyes',
+                  ? 'Drag the ring to tune · ${ColorTemperature.labelFor(filter.kelvin)} ${filter.kelvin}K'
+                  : 'Turn protection on to apply the filter',
               style: Theme.of(context).textTheme.bodySmall
                   ?.copyWith(color: palette.textMuted),
             ),

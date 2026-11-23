@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.lumashield.app.MainActivity
+import com.lumashield.app.filter.FilterBus
 import com.lumashield.app.filter.FilterPrefs
 
 /**
@@ -41,6 +42,14 @@ class EyeBreakReceiver : BroadcastReceiver() {
                 NotificationHelper.showEyeBreakNotification(context)
                 EyeBreakScheduler.scheduleNext(context)
                 EyeStatusNotifier.update(context)
+                // Lets the UI open the owl exercise by itself when the app is
+                // already in the foreground.
+                FilterBus.emit(
+                    mapOf(
+                        "eyeBreakDue" to System.currentTimeMillis(),
+                        "breakLengthSec" to prefs.breakLengthSec,
+                    ),
+                )
             }
 
             ACTION_START -> {

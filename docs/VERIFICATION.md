@@ -103,16 +103,19 @@ within a few seconds.
 Expected: a heads-up "Time for an eye break" notification arrives even though
 the app is closed, with Start exercise, Snooze 5m and Done.
 
-5. Tap **Start exercise**: the guided break opens with the owl, a countdown and
-   three steps (look far away, blink slowly, roll and rest).
-6. Let it finish, or tap Done.
+5. With the app open and in the foreground, the owl exercise opens by itself
+   when the break fires (Android only shows the notification when the app is in
+   the background; no app may force a full screen window there).
+6. Tap **Start exercise** from the notification: the guided break opens with the
+   owl, a countdown and three steps (look far away, blink slowly, roll and rest).
+7. Let it finish, or tap Done.
 
 Expected: the break closes and the status bar percentage jumps back up. Pull
 down the shade to confirm the new score.
 
-7. Tap **Snooze 5m** on a reminder instead: the next one arrives five minutes
+8. Tap **Snooze 5m** on a reminder instead: the next one arrives five minutes
    later and the dashboard countdown restarts.
-8. Set quiet hours to cover the current time and repeat: no notification
+9. Set quiet hours to cover the current time and repeat: no notification
    appears, but the alarm re-arms silently.
 
 The score itself is covered by unit tests: one point per minute of screen time,

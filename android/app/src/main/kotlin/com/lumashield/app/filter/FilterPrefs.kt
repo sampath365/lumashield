@@ -181,7 +181,7 @@ class FilterPrefs(context: Context) {
 
     /** Minutes between eye breaks, 20 or 30 in the UI. */
     var breakIntervalMin: Int
-        get() = prefs.getInt(KEY_BREAK_INTERVAL, 20).coerceIn(5, 120)
+        get() = prefs.getInt(KEY_BREAK_INTERVAL, 30).coerceIn(5, 120)
         set(value) = prefs.edit().putInt(KEY_BREAK_INTERVAL, value.coerceIn(5, 120)).apply()
 
     var breakLengthSec: Int

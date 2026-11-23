@@ -71,7 +71,7 @@ void main() {
     });
     await pumpApp(tester);
     expect(find.text('LumaShield'), findsWidgets);
-    expect(find.text('EYE COMFORT'), findsWidgets);
+    expect(find.textContaining('BLUE LIGHT'), findsWidgets);
     expect(find.text('Quick modes'), findsOneWidget);
     expect(find.text('Live filter'), findsOneWidget);
 

@@ -36,8 +36,8 @@ class _AppProfilesScreenState extends ConsumerState<AppProfilesScreen> {
 
     return GradientScaffold(
       appBar: AppBar(title: const Text('App profiles')),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: ListView(
+        padding: EdgeInsets.zero,
         children: [
           Text(
             'Choose which apps keep the filter, which get a stronger tint, and which '

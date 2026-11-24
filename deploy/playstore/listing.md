@@ -71,7 +71,7 @@ LumaShield is not a medical device.
 | App or game | App |
 | Category | Health & Fitness (alternative: Tools) |
 | Tags | blue light filter, eye strain, night mode, screen dimmer, eye care |
-| Contact email | support@lumashield.app |
+| Contact email | msg4sampath@gmail.com |
 | Website | https://lumashield.app |
 | Privacy policy URL | host `privacy-policy.md` and paste the public URL |
 

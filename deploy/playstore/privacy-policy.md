@@ -73,4 +73,4 @@ professional.
 
 ## Contact
 
-Questions about this policy: support@lumashield.app
+Questions about this policy: msg4sampath@gmail.com

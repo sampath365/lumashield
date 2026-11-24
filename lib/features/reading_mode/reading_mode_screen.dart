@@ -92,7 +92,9 @@ class _ReadingModeScreenState extends ConsumerState<ReadingModeScreen> {
           ),
         ],
       ),
-      body: Column(
+      body: SafeArea(
+        top: false,
+        child: Column(
         children: [
           Expanded(
             child: Stack(
@@ -257,6 +259,7 @@ class _ReadingModeScreenState extends ConsumerState<ReadingModeScreen> {
               ),
             ),
         ],
+        ),
       ),
     );
   }

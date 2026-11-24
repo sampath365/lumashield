@@ -109,16 +109,6 @@ class AboutScreen extends StatelessWidget {
                 ),
               ),
               SettingTile(
-                icon: Icons.article_outlined,
-                title: 'Open source licences',
-                trailing: const Icon(Icons.chevron_right_rounded),
-                onTap: () => showLicensePage(
-                  context: context,
-                  applicationName: AppConstants.appName,
-                  applicationVersion: '1.0.0',
-                ),
-              ),
-              SettingTile(
                 icon: Icons.mail_outline_rounded,
                 title: 'Contact support',
                 subtitle: AppConstants.supportEmail,
@@ -261,6 +251,17 @@ class PrivacyPolicyScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
+          const SizedBox(height: 12),
+          TextButton.icon(
+            onPressed: () => showLicensePage(
+              context: context,
+              applicationName: AppConstants.appName,
+              applicationVersion: '1.0.0',
+            ),
+            icon: const Icon(Icons.article_outlined, size: 16),
+            label: const Text('Open source licences'),
+          ),
+          const SizedBox(height: 8),
           for (final section in _sections) ...[
             Text(
               section.$1,

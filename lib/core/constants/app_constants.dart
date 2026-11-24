@@ -7,7 +7,7 @@ class AppConstants {
   static const String tagline = 'Blue light filter & eye care';
   static const String packageName = 'com.lumashield.app';
   static const String privacyUrl = 'https://lumashield.app/privacy';
-  static const String supportEmail = 'support@lumashield.app';
+  static const String supportEmail = 'msg4sampath@gmail.com';
   static const String githubUrl = 'https://github.com/lumashield/lumashield';
 
   static const int minKelvin = 1900;

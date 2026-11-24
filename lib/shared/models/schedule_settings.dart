@@ -17,6 +17,7 @@ enum ScheduleMode {
 class ScheduleSettings {
   const ScheduleSettings({
     this.enabled = false,
+    this.autoMode = true,
     this.mode = ScheduleMode.custom,
     this.startMinute = 21 * 60,
     this.endMinute = 7 * 60,
@@ -33,6 +34,9 @@ class ScheduleSettings {
   });
 
   final bool enabled;
+
+  /// Switches between Normal and Night mode when the schedule boundary passes.
+  final bool autoMode;
   final ScheduleMode mode;
   final int startMinute;
   final int endMinute;
@@ -96,6 +100,7 @@ class ScheduleSettings {
 
   Map<String, dynamic> toJson() => {
     'enabled': enabled,
+    'autoMode': autoMode,
     'mode': mode.name,
     'startMinute': startMinute,
     'endMinute': endMinute,
@@ -113,6 +118,7 @@ class ScheduleSettings {
 
   factory ScheduleSettings.fromJson(Map<String, dynamic> json) => ScheduleSettings(
     enabled: json['enabled'] as bool? ?? false,
+    autoMode: json['autoMode'] as bool? ?? true,
     mode: ScheduleMode.fromName(json['mode'] as String?),
     startMinute: (json['startMinute'] as num?)?.toInt() ?? 21 * 60,
     endMinute: (json['endMinute'] as num?)?.toInt() ?? 7 * 60,
@@ -132,6 +138,7 @@ class ScheduleSettings {
 
   Map<String, dynamic> toPlatformMap() => {
     'enabled': enabled,
+    'autoMode': autoMode,
     'mode': mode == ScheduleMode.sunsetSunrise ? 'sun' : 'custom',
     'startMinute': startMinute,
     'endMinute': endMinute,

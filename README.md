@@ -61,6 +61,8 @@ all read live state from the native layer.
 | 20-20-20, strain, continuous use and sleep reminders | Yes | Yes |
 | Eye breaks every 20/30/45 min (30 default) that fire with the app closed | Yes (native alarm) | Reminders while running |
 | Guided eye break with an owl mascot and countdown | Yes | Yes |
+| Owl popup over other apps when the app is closed | Yes (overlay card) | No |
+| Normal/Night mode switches itself at schedule boundaries | Yes | Yes |
 | Eye comfort percentage in the status bar | Yes (silent ongoing notification) | No |
 | Daily and weekly reports | Yes | Yes |
 | Biometric app lock | Yes | Yes |

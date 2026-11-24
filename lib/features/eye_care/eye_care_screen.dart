@@ -201,6 +201,31 @@ class EyeCareScreen extends ConsumerWidget {
                     label: const Text('Take a break now'),
                   ),
                 ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(0, 44),
+                    ),
+                    onPressed: () async {
+                      final shown =
+                          await ref.read(filterServiceProvider).showBreakPopup();
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            shown
+                                ? 'Popup shown. It closes itself after 30 seconds.'
+                                : 'Allow "Display over other apps" to show the popup.',
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.preview_outlined, size: 18),
+                    label: const Text('Preview the popup'),
+                  ),
+                ),
                 const SizedBox(height: 6),
               ],
             ),
@@ -248,6 +273,18 @@ class EyeCareScreen extends ConsumerWidget {
                   value: settings.lowLightReminder,
                   onChanged: (v) =>
                       controller.update((s) => s.copyWith(lowLightReminder: v)),
+                ),
+              ),
+              SettingTile(
+                icon: Icons.picture_in_picture_alt_outlined,
+                title: 'Popup over other apps',
+                subtitle: settings.breakPopup
+                    ? 'The owl card appears on top of whatever you are using'
+                    : 'Only a notification is shown',
+                trailing: Switch(
+                  value: settings.breakPopup,
+                  onChanged: (v) =>
+                      controller.update((s) => s.copyWith(breakPopup: v)),
                 ),
               ),
               SettingTile(

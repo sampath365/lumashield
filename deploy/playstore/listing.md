@@ -31,6 +31,7 @@ AUTOMATIC PROTECTION
 • Sunset to sunrise scheduling calculated offline from your approximate location
 • Custom start and end times, weekday and weekend rules
 • Separate night and daytime intensities so protection follows your day
+• Switches between Normal and Night mode by itself at your schedule boundaries
 • Restores your settings after a reboot and restarts itself if interrupted
 • Persistent status notification with a pause action
 • Quick settings tile and home screen widget for one tap control

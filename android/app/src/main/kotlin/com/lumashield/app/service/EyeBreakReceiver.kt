@@ -40,6 +40,9 @@ class EyeBreakReceiver : BroadcastReceiver() {
                     return
                 }
                 NotificationHelper.showEyeBreakNotification(context)
+                // The card is the part users actually see; the notification
+                // stays for the lock screen and the shade.
+                BreakPopup.show(context)
                 EyeBreakScheduler.scheduleNext(context)
                 EyeStatusNotifier.update(context)
                 // Lets the UI open the owl exercise by itself when the app is
@@ -53,6 +56,7 @@ class EyeBreakReceiver : BroadcastReceiver() {
             }
 
             ACTION_START -> {
+                BreakPopup.dismiss(context)
                 val launch = Intent(context, MainActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                     putExtra(MainActivity.EXTRA_LAUNCH_ACTION, MainActivity.LAUNCH_ACTION_EYE_BREAK)
@@ -62,12 +66,14 @@ class EyeBreakReceiver : BroadcastReceiver() {
             }
 
             ACTION_DONE -> {
+                BreakPopup.dismiss(context)
                 EyeStatusNotifier.registerRest(context)
                 NotificationHelper.cancelEyeBreakNotification(context)
                 EyeBreakScheduler.scheduleNext(context)
             }
 
             ACTION_SNOOZE -> {
+                BreakPopup.dismiss(context)
                 NotificationHelper.cancelEyeBreakNotification(context)
                 EyeBreakScheduler.snooze(context, minutes = 5)
                 EyeStatusNotifier.update(context)

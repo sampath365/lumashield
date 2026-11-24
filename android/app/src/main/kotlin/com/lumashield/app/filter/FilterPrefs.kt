@@ -213,6 +213,11 @@ class FilterPrefs(context: Context) {
         get() = prefs.getBoolean(KEY_EYE_STATUS, true)
         set(value) = prefs.edit().putBoolean(KEY_EYE_STATUS, value).apply()
 
+    /** Shows the owl card over other apps when a break is due. */
+    var breakPopup: Boolean
+        get() = prefs.getBoolean(KEY_BREAK_POPUP, true)
+        set(value) = prefs.edit().putBoolean(KEY_BREAK_POPUP, value).apply()
+
     var lastBreakAt: Long
         get() = prefs.getLong(KEY_LAST_BREAK, 0L)
         set(value) = prefs.edit().putLong(KEY_LAST_BREAK, value).apply()
@@ -243,6 +248,7 @@ class FilterPrefs(context: Context) {
         (map["sound"] as? Boolean)?.let { eyeSound = it }
         (map["vibrate"] as? Boolean)?.let { eyeVibrate = it }
         (map["showEyeStatus"] as? Boolean)?.let { eyeStatusEnabled = it }
+        (map["breakPopup"] as? Boolean)?.let { breakPopup = it }
     }
 
     /** Map of package name to profile, stored as JSON so it is easy to diff. */
@@ -326,6 +332,7 @@ class FilterPrefs(context: Context) {
         private const val KEY_EYE_STATUS = "eye_status_enabled"
         private const val KEY_LAST_BREAK = "eye_last_break"
         private const val KEY_NEXT_BREAK = "eye_next_break"
+        private const val KEY_BREAK_POPUP = "eye_break_popup"
         private const val KEY_SCREEN_MINUTES = "eye_screen_minutes"
     }
 }

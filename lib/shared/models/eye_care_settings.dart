@@ -19,6 +19,7 @@ class EyeCareSettings {
     this.soundEnabled = true,
     this.vibrationEnabled = true,
     this.showEyeStatus = true,
+    this.breakPopup = true,
   });
 
   final bool twentyRuleEnabled;
@@ -40,6 +41,9 @@ class EyeCareSettings {
   /// Ongoing, silent status bar notification with the eye comfort percentage.
   final bool showEyeStatus;
 
+  /// Shows the owl card over other apps when a break is due.
+  final bool breakPopup;
+
   EyeCareSettings copyWith({
     bool? twentyRuleEnabled,
     int? twentyIntervalMin,
@@ -57,6 +61,7 @@ class EyeCareSettings {
     bool? soundEnabled,
     bool? vibrationEnabled,
     bool? showEyeStatus,
+    bool? breakPopup,
   }) => EyeCareSettings(
     twentyRuleEnabled: twentyRuleEnabled ?? this.twentyRuleEnabled,
     twentyIntervalMin: twentyIntervalMin ?? this.twentyIntervalMin,
@@ -74,6 +79,7 @@ class EyeCareSettings {
     soundEnabled: soundEnabled ?? this.soundEnabled,
     vibrationEnabled: vibrationEnabled ?? this.vibrationEnabled,
     showEyeStatus: showEyeStatus ?? this.showEyeStatus,
+    breakPopup: breakPopup ?? this.breakPopup,
   );
 
   /// Payload the Kotlin break scheduler reads.
@@ -87,6 +93,7 @@ class EyeCareSettings {
     'sound': soundEnabled,
     'vibrate': vibrationEnabled,
     'showEyeStatus': showEyeStatus,
+    'breakPopup': breakPopup,
   };
 
   Map<String, dynamic> toJson() => {
@@ -106,6 +113,7 @@ class EyeCareSettings {
     'soundEnabled': soundEnabled,
     'vibrationEnabled': vibrationEnabled,
     'showEyeStatus': showEyeStatus,
+    'breakPopup': breakPopup,
   };
 
   factory EyeCareSettings.fromJson(Map<String, dynamic> json) => EyeCareSettings(
@@ -125,5 +133,6 @@ class EyeCareSettings {
     soundEnabled: json['soundEnabled'] as bool? ?? true,
     vibrationEnabled: json['vibrationEnabled'] as bool? ?? true,
     showEyeStatus: json['showEyeStatus'] as bool? ?? true,
+    breakPopup: json['breakPopup'] as bool? ?? true,
   );
 }

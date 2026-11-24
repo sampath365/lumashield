@@ -25,6 +25,7 @@ import com.lumashield.app.filter.FilterPrefs
 import com.lumashield.app.filter.FilterSupport
 import com.lumashield.app.filter.SchedulePlanner
 import com.lumashield.app.filter.ScheduleSettings
+import com.lumashield.app.service.BreakPopup
 import com.lumashield.app.service.EyeBreakScheduler
 import com.lumashield.app.service.EyeStatusNotifier
 import com.lumashield.app.service.ForegroundAppReader
@@ -290,6 +291,16 @@ class MainActivity : FlutterFragmentActivity() {
                 result.success(eyeCareMap(prefs))
             }
 
+            "showBreakPopup" -> {
+                val shown = BreakPopup.show(this)
+                result.success(shown)
+            }
+
+            "dismissBreakPopup" -> {
+                BreakPopup.dismiss(this)
+                result.success(true)
+            }
+
             "consumeLaunchAction" -> {
                 val action = pendingLaunchAction
                 pendingLaunchAction = null
@@ -356,6 +367,7 @@ class MainActivity : FlutterFragmentActivity() {
         "sound" to prefs.eyeSound,
         "vibrate" to prefs.eyeVibrate,
         "showEyeStatus" to prefs.eyeStatusEnabled,
+        "breakPopup" to prefs.breakPopup,
         "eyeScore" to EyeStatusNotifier.computeScore(prefs),
         "minutesSinceBreak" to ((System.currentTimeMillis() - prefs.lastBreakAt) / 60_000L)
             .coerceAtLeast(0),

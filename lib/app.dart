@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'core/utils/auto_mode.dart';
 import 'core/utils/color_temperature.dart';
 import 'core/utils/platform_capabilities.dart';
 import 'features/dashboard/home_shell.dart';
@@ -23,6 +24,7 @@ class _LumaShieldAppState extends ConsumerState<LumaShieldApp> with WidgetsBindi
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
   bool _breakScheduled = false;
   StreamSubscription<Map<String, dynamic>>? _breakWatcher;
+  Timer? _modeTimer;
 
   @override
   void initState() {
@@ -35,6 +37,21 @@ class _LumaShieldAppState extends ConsumerState<LumaShieldApp> with WidgetsBindi
     _breakWatcher = ref.read(filterServiceProvider).rawEvents().listen((event) {
       if (event['eyeBreakDue'] != null) _openBreakIfIdle();
     });
+    _applyScheduledMode();
+    _modeTimer = Timer.periodic(
+      const Duration(minutes: 1),
+      (_) => _applyScheduledMode(),
+    );
+  }
+
+  /// Follows the schedule: Normal during the day, Night once the window starts.
+  void _applyScheduledMode() {
+    final schedule = ref.read(scheduleControllerProvider);
+    final wanted = scheduledModeFor(DateTime.now(), schedule);
+    if (wanted == null) return;
+    final filter = ref.read(filterControllerProvider);
+    if (filter.mode == wanted) return;
+    ref.read(filterControllerProvider.notifier).setMode(wanted);
   }
 
   Future<void> _openBreakIfIdle() async {
@@ -71,6 +88,7 @@ class _LumaShieldAppState extends ConsumerState<LumaShieldApp> with WidgetsBindi
 
   @override
   void dispose() {
+    _modeTimer?.cancel();
     _breakWatcher?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
@@ -85,6 +103,7 @@ class _LumaShieldAppState extends ConsumerState<LumaShieldApp> with WidgetsBindi
       }
     }
     if (state == AppLifecycleState.resumed) {
+      _applyScheduledMode();
       _consumeLaunchAction();
       // Permissions may have changed in system settings while we were away.
       ref.read(permissionsControllerProvider.notifier).refresh();

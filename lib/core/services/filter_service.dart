@@ -295,6 +295,11 @@ class FilterService {
   /// Arms the next break one interval from now without notifying immediately.
   Future<void> startEyeBreakNow() => _void('startEyeBreakNow');
 
+  /// Shows the owl card over other apps right now (used by the preview button).
+  Future<bool> showBreakPopup() => _bool('showBreakPopup');
+
+  Future<void> dismissBreakPopup() => _void('dismissBreakPopup');
+
   /// Returns "eye_break" when the app was opened from a break notification.
   Future<String?> consumeLaunchAction() async {
     if (!isSupported) return null;

@@ -5,6 +5,7 @@ Everything the Google Play Console asks for, in upload order.
 ```
 deploy/
 └── playstore/
+    ├── UPLOAD_MAP.md         which console screen each file goes to
     ├── CONSOLE_CHECKLIST.md  screen by screen walkthrough with exact values
     ├── ASSET_CHECK.md        automated pass/fail for every Play requirement
     ├── MANIFEST.md           size and SHA-256 of every file here

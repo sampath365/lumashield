@@ -1,5 +1,7 @@
 # Play Console checklist — LumaShield 1.0.0
 
+For a file-by-file answer to "where do I upload this?", see `UPLOAD_MAP.md`.
+
 Work top to bottom. Every value below is already in this folder, so the console
 is copy and paste.
 

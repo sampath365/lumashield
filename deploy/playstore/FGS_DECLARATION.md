@@ -52,7 +52,12 @@ Two options:
 screen recording only, no narration. Upload as **unlisted** on YouTube and paste
 the link.
 
-**B. Use the generated demo** at `deploy/playstore/video/fgs-demo.mp4`
+**B. Use the generated demo.** Public links (no login needed):
+
+- Watch in a browser: https://cdn.jsdelivr.net/gh/sampath365/lumashield@main/docs/media/fgs-demo.mp4
+- Download: https://github.com/sampath365/lumashield/releases/tag/v1.0.0
+
+Local copy: `deploy/playstore/video/fgs-demo.mp4`
 (22 seconds, 1080x1920, built by `python3 tool/video/build_fgs_demo.py`). It is
 composed from the app's own screenshots plus a mock browser tinted with the same
 colour maths, so it shows the behaviour accurately, but it is not a literal

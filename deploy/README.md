@@ -28,6 +28,7 @@ deploy/
     │       └── extras/      1080x1920  (permissions, reading mode, presets)
     ├── video/
     │   └── fgs-demo.mp4      22 s demo of the overlay (see FGS_DECLARATION.md)
+    │                         public: https://cdn.jsdelivr.net/gh/sampath365/lumashield@main/docs/media/fgs-demo.mp4 
     └── binaries/
         ├── LumaShield-1.0.0-release.aab   upload this to Play
         ├── LumaShield-1.0.0-release.apk   sideload / QA

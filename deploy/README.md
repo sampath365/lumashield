@@ -26,6 +26,8 @@ deploy/
     │       ├── tablet-7/    1200x1920  (5 screens)
     │       ├── tablet-10/   1600x2560  (5 screens)
     │       └── extras/      1080x1920  (permissions, reading mode, presets)
+    ├── video/
+    │   └── fgs-demo.mp4      22 s demo of the overlay (see FGS_DECLARATION.md)
     └── binaries/
         ├── LumaShield-1.0.0-release.aab   upload this to Play
         ├── LumaShield-1.0.0-release.apk   sideload / QA
@@ -73,6 +75,9 @@ pip install pillow
 python3 tool/brand/generate_assets.py          # icons, feature graphic, lockup
 flutter test tool/screenshots/screens_test.dart --update-goldens  # screenshots
 ```
+
+The demo video is rebuilt with `python3 tool/video/build_fgs_demo.py`
+(needs ffmpeg and Pillow).
 
 Both scripts are deterministic, so the images can be rebuilt from source at any
 time. The screenshots are rendered from the real widget tree at the exact sizes

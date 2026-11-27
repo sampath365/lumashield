@@ -46,9 +46,20 @@ If the field accepts more text, use this longer version:
 
 ## 3. Video
 
-Record 30 to 60 seconds on a real phone, screen recording only, no narration
-needed. Upload it as **unlisted** on YouTube (or Google Drive with link
-sharing) and paste the link.
+Two options:
+
+**A. Record it on your phone (best for the declaration).** 30 to 60 seconds,
+screen recording only, no narration. Upload as **unlisted** on YouTube and paste
+the link.
+
+**B. Use the generated demo** at `deploy/playstore/video/fgs-demo.mp4`
+(22 seconds, 1080x1920, built by `python3 tool/video/build_fgs_demo.py`). It is
+composed from the app's own screenshots plus a mock browser tinted with the same
+colour maths, so it shows the behaviour accurately, but it is not a literal
+device recording. Use it for the store listing or social posts; if you submit it
+for the declaration, say that it is a product demo rather than a screen capture.
+
+Shot list for option A:
 
 Shot list:
 

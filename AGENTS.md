@@ -29,6 +29,9 @@ flutter test tool/screenshots/screens_test.dart --update-goldens
 
 # Validate every Play asset and regenerate ASSET_CHECK.md + MANIFEST.md
 python3 tool/playstore/validate_assets.py
+
+# Rebuild the demo video (needs ffmpeg)
+python3 tool/video/build_fgs_demo.py
 ```
 
 ## Critical gotcha: material_ui

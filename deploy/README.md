@@ -5,6 +5,9 @@ Everything the Google Play Console asks for, in upload order.
 ```
 deploy/
 └── playstore/
+    ├── CONSOLE_CHECKLIST.md  screen by screen walkthrough with exact values
+    ├── ASSET_CHECK.md        automated pass/fail for every Play requirement
+    ├── MANIFEST.md           size and SHA-256 of every file here
     ├── listing.md            app name, short + full description, category
     ├── release-notes.txt     "What's new" for version 1.0.0
     ├── data-safety.md        Data safety form answers + permission justifications
@@ -28,6 +31,27 @@ deploy/
         ├── SHA256SUMS.txt
         └── BUILD_INFO.txt
 ```
+
+## Check everything first
+
+```bash
+python3 tool/playstore/validate_assets.py
+```
+
+It verifies the icon, feature graphic, every screenshot (size, aspect, weight),
+the documents and the binaries, then rewrites `ASSET_CHECK.md` and
+`MANIFEST.md`. It exits non zero if the console would reject anything.
+
+## Hosting the privacy policy
+
+`docs/privacy.html` is a ready made page. Turn on GitHub Pages for this
+repository with the folder set to `/docs`, and the policy is served at:
+
+```
+https://sampath365.github.io/lumashield/privacy.html
+```
+
+Paste that URL into Play Console → Store listing → Privacy policy.
 
 ## Upload order
 

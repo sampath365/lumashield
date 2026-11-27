@@ -228,6 +228,9 @@ Everything the Play Console asks for lives in [`deploy/`](deploy/README.md):
 
 ```
 deploy/playstore/
+  CONSOLE_CHECKLIST.md    screen by screen Play Console walkthrough
+  ASSET_CHECK.md          automated pass/fail for every asset
+  MANIFEST.md             size and SHA-256 of every file
   listing.md              name, short + full description, category
   release-notes.txt       "What's new"
   data-safety.md          data safety answers + permission justifications

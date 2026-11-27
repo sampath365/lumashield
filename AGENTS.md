@@ -26,6 +26,9 @@ flutter build appbundle --release
 
 # Store screenshots -> deploy/playstore/graphics/screenshots/{phone,tablet-7,tablet-10}
 flutter test tool/screenshots/screens_test.dart --update-goldens
+
+# Validate every Play asset and regenerate ASSET_CHECK.md + MANIFEST.md
+python3 tool/playstore/validate_assets.py
 ```
 
 ## Critical gotcha: material_ui

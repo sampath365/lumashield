@@ -50,7 +50,8 @@ flutter build apk --release
 
 ## 3. Play Console
 
-Follow `deploy/playstore/listing.md`:
+Follow `deploy/playstore/CONSOLE_CHECKLIST.md` (screen by screen) and
+`deploy/playstore/listing.md`:
 
 1. Create the app, package name `com.lumashield.app`.
 2. Upload the AAB to the internal testing track first.

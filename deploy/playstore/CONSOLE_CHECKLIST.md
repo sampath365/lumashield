@@ -80,7 +80,7 @@ Copy from `listing.md`.
 | Video | none |
 | Contact email | `msg4sampath@gmail.com` |
 | Website | optional, leave blank if you have none |
-| Privacy policy | public URL of `privacy-policy.md` |
+| Privacy policy | public URL of `privacy-policy.html` |
 
 Screenshot order matters; upload them sorted by filename.
 

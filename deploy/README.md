@@ -13,7 +13,8 @@ deploy/
     ├── release-notes.txt     "What's new" for version 1.0.0
     ├── data-safety.md        Data safety form answers + permission justifications
     ├── content-rating.md     IARC questionnaire answers
-    ├── privacy-policy.md     host this at a public URL, then link it
+    ├── privacy-policy.md     source text
+    ├── privacy-policy.html   same policy as a standalone page, upload anywhere
     ├── graphics/
     │   ├── app-icon-512.png            512x512  (store listing icon)
     │   ├── app-icon-1024.png           1024x1024 (press / adaptive source)
@@ -48,7 +49,8 @@ the documents and the binaries, then rewrites `ASSET_CHECK.md` and
 
 ## Hosting the privacy policy
 
-`docs/privacy.html` is a ready made page. Turn on GitHub Pages for this
+`docs/privacy.html` is a ready made page (generated from
+`deploy/playstore/privacy-policy.md` with `python3 tool/playstore/md_to_html.py`). Turn on GitHub Pages for this
 repository with the folder set to `/docs`, and the policy is served at:
 
 ```
